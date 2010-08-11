@@ -1,0 +1,53 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package lynea.npc.actions;
+
+import lynea.AssetOwner;
+import lynea.PhysicalEntity;
+
+/**
+ *
+ * @author Olivier
+ */
+public class ActionMark extends PhysicalEntity implements Cloneable
+{
+    public AssetOwner markOwner;
+
+    private boolean isVisible = true;
+
+    public ActionMark(double x, double y, double z, AssetOwner markOwner, boolean isVisible)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.markOwner = markOwner;
+        this.isVisible = isVisible;
+    }
+
+    @Override
+    public Object clone()
+    {
+        try
+        {
+          ActionMark cloned = (ActionMark)super.clone();
+          return cloned;
+        }
+        catch(CloneNotSupportedException e)
+        {
+          System.out.println(e);
+          return null;
+        }
+    }
+
+    double distance(ActionMark other) {
+        return Math.sqrt((other.x-x)*(other.x-x)+(other.y-y)*(other.y-y)+(other.z-z)*(other.z-z));
+     }
+
+    public void setVisible(boolean status)
+    {
+        isVisible = status;
+    }
+}
