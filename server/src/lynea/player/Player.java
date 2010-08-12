@@ -29,6 +29,8 @@ public class Player extends PhysicalEntity implements AssetOwner
 
     private List<NPC> workers;
     private User user;
+
+    public static float walkSpeed = 2.0f;
     
     /**
      * retreive all Players from database and create the corresponding Players objects
@@ -122,11 +124,14 @@ public class Player extends PhysicalEntity implements AssetOwner
             System.out.println("Player cannot attack this target atm");
         }
     }
-    //public boolean canReceive()
-    //{
-    //    return (user != null);
-    //}
-
-
-
+    
+    @Override
+    synchronized public void setAnimation(String animation)
+    {
+        super.setAnimation(animation);
+        if (animation.equals("idle1"))
+            SetSpeedForCurrentAnimation(0);
+        else if(animation.equals("walk"))
+            SetSpeedForCurrentAnimation(Player.walkSpeed);
+    }
 }

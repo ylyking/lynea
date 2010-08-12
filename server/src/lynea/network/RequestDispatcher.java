@@ -48,7 +48,7 @@ public class RequestDispatcher extends AbstractExtension{
     private void initInvocationTable()
     {
         requestHandlers = new HashMap<String, String>();
-        requestHandlers.put("t", "MovementRequestHandler");
+        requestHandlers.put("h", "MovementRequestHandler");
         requestHandlers.put("a", "ActionRequestHandler");
 
         internalEventHandlers = new HashMap<String, String>();

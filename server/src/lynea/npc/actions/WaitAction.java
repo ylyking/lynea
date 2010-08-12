@@ -38,7 +38,8 @@ public class WaitAction extends TimedActionElement implements AttackListener
     @Override
     public void start()
     {
-        System.out.println(getName()+".start() -- NPC>IDLE1 anim");
+        System.out.println(getName()+".start()");
+        //this also sets the speed to zero
         npc.setAnimation("idle1");
         super.start();
     }

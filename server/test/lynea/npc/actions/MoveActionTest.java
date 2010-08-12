@@ -47,8 +47,8 @@ public class MoveActionTest {
         //Create an NPC that will move from ActionMark 'start' to ActionMark 'finish'
         npc = new NPC();
         npcOwner = new Player(null);
-        start = new ActionMark(-2.0,0.0,-1.0, npcOwner, true);
-        finish = new ActionMark(3.0,0.0,4.0, npcOwner, true);
+        start = new ActionMark(-2.0f,0.0f,-1.0f, npcOwner, true);
+        finish = new ActionMark(3.0f,0.0f,4.0f, npcOwner, true);
         move = new MoveAction("MoveAction", npc, start, finish);
         npc.addAction(move);
     }
@@ -77,14 +77,14 @@ public class MoveActionTest {
         move.start();
         assertTrue(move.update(deltaTime));
         //check the move progress
-        assertEquals(npc.getSpeed() * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
+        assertEquals(npc.getSpeedForCurrentAnimation() * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
         //cannot update if paused
         move.pause();
         assertFalse(move.update(deltaTime));
         move.resume();
         assertTrue(move.update(deltaTime));
         //check the move progress
-        assertEquals(2 * npc.getSpeed() * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
+        assertEquals(2 * npc.getSpeedForCurrentAnimation() * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
     }
 
     /**
@@ -141,7 +141,7 @@ public class MoveActionTest {
         assertTrue(npc.updateAction(deltaTime));
         assertTrue(npc.updateAction(deltaTime));
         //check the move progress
-        assertEquals(npc.getSpeed() * 2 * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
+        assertEquals(npc.getSpeedForCurrentAnimation() * 2 * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
 
         Player attacker = new Player(null);
         attacker.attack(npc);
@@ -149,7 +149,7 @@ public class MoveActionTest {
         //update the Attack action
         assertTrue(npc.updateAction(deltaTime));
         //check the move progress (it shouldn't have changed)
-        assertEquals(npc.getSpeed() * 2 * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
+        assertEquals(npc.getSpeedForCurrentAnimation() * 2 * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
 
         //***temporary behaviour***
         //update the Attack action
@@ -160,7 +160,7 @@ public class MoveActionTest {
         start =  new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
         //this updates the move again
         assertTrue(npc.updateAction(deltaTime));
-        assertEquals(npc.getSpeed() * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
+        assertEquals(npc.getSpeedForCurrentAnimation() * deltaTime / start.distance(finish), move.getProgress(), 0.0001 * move.getProgress());
     }
 
 }

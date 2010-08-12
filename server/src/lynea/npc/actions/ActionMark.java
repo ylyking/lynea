@@ -18,7 +18,7 @@ public class ActionMark extends PhysicalEntity implements Cloneable
 
     private boolean isVisible = true;
 
-    public ActionMark(double x, double y, double z, AssetOwner markOwner, boolean isVisible)
+    public ActionMark(float x, float y, float z, AssetOwner markOwner, boolean isVisible)
     {
         this.x = x;
         this.y = y;
@@ -42,8 +42,8 @@ public class ActionMark extends PhysicalEntity implements Cloneable
         }
     }
 
-    double distance(ActionMark other) {
-        return Math.sqrt((other.x-x)*(other.x-x)+(other.y-y)*(other.y-y)+(other.z-z)*(other.z-z));
+    float distance(ActionMark other) {
+        return (float) Math.sqrt((other.x-x)*(other.x-x)+(other.y-y)*(other.y-y)+(other.z-z)*(other.z-z));
      }
 
     public void setVisible(boolean status)
