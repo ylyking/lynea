@@ -18,11 +18,11 @@ public class MoveAction extends ActionElement implements AttackListener
     private ActionMark begin;
     private ActionMark end;
     private ActionMark current;
-    private double totalTime;
+    private float totalTime;
 
-    private double speed;
-    private double progress = 0;
-    private double arrivalProximity = 0.5;
+    private float speed;
+    private float progress = 0;
+    //private float arrivalProximity = 0.5f;
 
     private boolean hasBeenAttacked = false;
 
@@ -33,8 +33,6 @@ public class MoveAction extends ActionElement implements AttackListener
         this.end = end;
         this.current = (ActionMark) begin.clone();
         this.current.setVisible(false);
-        speed = npc.getSpeed();
-        totalTime = getTotalTime();
 
         attachListener(this);
     }
@@ -48,22 +46,15 @@ public class MoveAction extends ActionElement implements AttackListener
         //TODO: path finding
         //update movement progress (between 0 and 1)
         progress += deltaTime / totalTime;
-        double current_x =  begin.getX() + progress * (end.getX() -  begin.getX());
-        double current_y =  begin.getY() + progress * (end.getY() -  begin.getY());
-        double current_z =  begin.getZ() + progress * (end.getZ() -  begin.getZ());
+
+        float current_x =  begin.getX() + progress * (end.getX() -  begin.getX());
+        float current_y =  begin.getY() + progress * (end.getY() -  begin.getY());
+        float current_z =  begin.getZ() + progress * (end.getZ() -  begin.getZ());
         current.setPosition(current_x, current_y, current_z);
         
-        //alpha_z is the angle between the current facing direction and the global z axis
-
-        double alpha_z = Math.PI/2 - Math.atan2(end.getZ()-current_z, end.getX()-current_x);
-
-        //convert to (left handed) quaternion
-        double ry = Math.sin(alpha_z/2);
-        double w = Math.cos(alpha_z/2);
-        current.setOrientation(0.0, ry, 0.0, w);
-
-        npc.setTransform(current);
-        if (current.distance(end) < arrivalProximity)
+        npc.updateHeading();
+        //if (current.distance(end) < arrivalProximity)
+        if (progress >= 1)
             end();
 
         return true;
@@ -72,25 +63,30 @@ public class MoveAction extends ActionElement implements AttackListener
     @Override
     public void start()
     {
-        System.out.println(getName()+".start() -- NPC>WALK anim");
-        npc.setAnimation("walk");
         super.start();
+
+        System.out.println(getName()+".start()");
+        npc.setAnimation("walk");
+        speed = npc.getSpeedForCurrentAnimation();
+        totalTime = getTotalTime();
+        setNPCInitialHeading();
     }
 
     @Override
     protected void end()
     {
-        System.out.println(getName()+".end() -- NPC>idle1 anim");
+        System.out.println(getName()+".end()");
         npc.setAnimation("idle1");
+        npc.setPosition(this.end);
         super.end();
     }
 
-    private double getTotalTime()
+    private float getTotalTime()
     {
        //TODO: path finding
        return begin.distance(end) / speed;
     }
-    public double getProgress()
+    public float getProgress()
     {
         return progress;
     }
@@ -119,9 +115,20 @@ public class MoveAction extends ActionElement implements AttackListener
             begin = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
             current = (ActionMark) begin.clone();
             progress = 0;
+            npc.setAnimation("walk");
+            speed = npc.getSpeedForCurrentAnimation();
             totalTime = getTotalTime();
+            setNPCInitialHeading();
             hasBeenAttacked = false;
         }
     }
 
+    private void setNPCInitialHeading()
+    {
+        npc.setPosition(begin.getX(), begin.getY(), begin.getZ());
+        //alpha is the angle between the current facing direction and the global z axis
+        float alpha = (float) (Math.PI/2 - Math.atan2(end.getZ()-begin.getZ(), end.getX()-begin.getX()));
+        npc.setAngle(alpha);
+        npc.setHeadingUpdateTime();
+    }
 }

@@ -24,7 +24,7 @@ import lynea.player.Player;
  */
 public class NPC extends PhysicalEntity
 {
-    public static double walkSpeed = 2;
+    public static final float walkSpeed = 1.8f;
 
     private ActionGroup rootActionGroup;
     static private long maxID = 0;
@@ -40,18 +40,18 @@ public class NPC extends PhysicalEntity
     {
         all = new ArrayList<NPC>();
         NPC testNPC = new NPC(Player.all.get("oli"));
-        testNPC.setPosition(-4.0, 0.0, -5.0);
+        testNPC.setPosition(-16.0f, 0.0f, -17.0f);
         all.add(testNPC);
 
-        WaitAction wait0 = new WaitAction("Wait0", testNPC, 5);
+        WaitAction wait0 = new WaitAction("Wait0", testNPC, 30);
         testNPC.addAction(wait0);
-        ActionMark start1 = new ActionMark(-4.0,0.0,-5.0, Player.all.get("oli"), true);
-        ActionMark finish1 = new ActionMark(13.0,0.0,14.0, Player.all.get("oli"), true);
+        ActionMark start1 = new ActionMark(-16.0f,0.0f,-17.0f, Player.all.get("oli"), true);
+        ActionMark finish1 = new ActionMark(13.0f,0.0f,14.0f, Player.all.get("oli"), true);
         MoveAction move1 = new MoveAction("Move1", testNPC, start1, finish1);
         testNPC.addAction(move1);
         WaitAction wait1 = new WaitAction("Wait1", testNPC, 3);
         testNPC.addAction(wait1);
-        ActionMark start2 = new ActionMark(13.0,0.0,14.0, Player.all.get("oli"), true);
+        /*ActionMark start2 = new ActionMark(13.0,0.0,14.0, Player.all.get("oli"), true);
         ActionMark finish2 = new ActionMark(-14.0,0.0,15.0, Player.all.get("oli"), true);
         MoveAction move2 = new MoveAction("Move2", testNPC, start2, finish2);
         testNPC.addAction(move2);
@@ -62,11 +62,11 @@ public class NPC extends PhysicalEntity
         MoveAction move3 = new MoveAction("Move3", testNPC, start3, finish3);
         testNPC.addAction(move3);
         ActionMark start4 = new ActionMark(14.0,0.0,-15.0, Player.all.get("oli"), true);
-        ActionMark finish4 = new ActionMark(-4.0,0.0,-5.0, Player.all.get("oli"), true);
+        ActionMark finish4 = new ActionMark(-16.0,0.0,-17.0, Player.all.get("oli"), true);
         MoveAction move4 = new MoveAction("Move4", testNPC, start4, finish4);
         testNPC.addAction(move4);
         WaitAction wait4= new WaitAction("Wait4", testNPC, 1);
-        testNPC.addAction(wait4);
+        testNPC.addAction(wait4);*/
 
         testNPC.startAction();
     }
@@ -77,6 +77,7 @@ public class NPC extends PhysicalEntity
             npc.updateAction(deltaTime);
         }
     }
+    
 
     public NPC()
     {
@@ -98,12 +99,6 @@ public class NPC extends PhysicalEntity
     {
         return rootActionGroup.remove(action);
     }
-
-    public double getSpeed()
-    {
-        return walkSpeed;
-    }
-
 
 
     public <T extends InterruptListener> List<T> getListeners(Class<T> interruptListenerClass)
@@ -132,4 +127,13 @@ public class NPC extends PhysicalEntity
         return this.owner;
     }
 
+    @Override
+    synchronized public void setAnimation(String animation)
+    {
+        super.setAnimation(animation);
+        if (animation.equals("idle1"))
+            SetSpeedForCurrentAnimation(0.0f);
+        else if(animation.equals("walk"))
+            SetSpeedForCurrentAnimation(NPC.walkSpeed);
+    }
 }

@@ -6,7 +6,6 @@
 package lynea.npc.actions;
 
 import lynea.npc.NPC;
-import lynea.npc.actions.ActionElement;
 
 /**
  *
