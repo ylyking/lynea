@@ -5,7 +5,7 @@
 
 package lynea;
 
-import java.sql.Timestamp;
+import java.util.Calendar;
 
 /**
  *
@@ -13,17 +13,18 @@ import java.sql.Timestamp;
  */
 public class Clock
 {
-    private static Timestamp timestamp = null;
+    private static Calendar serverstart = null;
 
     public static void initClock()
     {
-        timestamp = new Timestamp(0);
+        serverstart = Calendar.getInstance();
     }
     public static long getTime()
     {
-        if (timestamp == null)
+        if (serverstart == null)
             initClock();
-        return timestamp.getTime();
+        Calendar now = Calendar.getInstance();
+        return (now.getTimeInMillis() - serverstart.getTimeInMillis());
     }
 
 }
