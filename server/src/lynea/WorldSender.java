@@ -232,6 +232,7 @@ public class WorldSender
             double z = (double) npc.getZ();
             double alpha = (double) npc.getAngle();
             double t = (double) npc.getHeadingUpdateTime();
+            System.out.println("t="+t);
             double s = (double) npc.getSpeedForCurrentAnimation();
             
             ActionscriptObject nearNPCAO = new ActionscriptObject();

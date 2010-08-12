@@ -88,7 +88,7 @@ public class PhysicalEntity
             setRY(ry);
             setRZ(rz);
             setW(w);
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public void setTransform(PhysicalEntity e)
@@ -106,7 +106,7 @@ public class PhysicalEntity
             setRY(e.getRY());
             setRZ(e.getRZ());
             setW(e.getW());
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public void setPosition(float x, float y, float z)
@@ -118,7 +118,7 @@ public class PhysicalEntity
                 setX(x);
                 setY(y);
                 setZ(z);
-                this.lastUpdateTime = Clock.getTime();
+                setHeadingUpdateTime();
             }
     }
         synchronized public void setPosition(PhysicalEntity e)
@@ -130,7 +130,7 @@ public class PhysicalEntity
                 setX(e.getX());
                 setY(e.getY());
                 setZ(e.getZ());
-                this.lastUpdateTime = Clock.getTime();
+                setHeadingUpdateTime();
             }
     }
 
@@ -144,7 +144,7 @@ public class PhysicalEntity
             setRY(ry);
             setRZ(rz);
             setW(w);
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getX() {
@@ -156,7 +156,7 @@ public class PhysicalEntity
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
             this.x = x;
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getY() {
@@ -168,7 +168,7 @@ public class PhysicalEntity
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
             this.y = y;
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getZ() {
@@ -180,7 +180,7 @@ public class PhysicalEntity
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
             this.z = z;
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getRX() {
@@ -192,7 +192,7 @@ public class PhysicalEntity
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
             this.rx = rx;
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getRY() {
@@ -206,7 +206,7 @@ public class PhysicalEntity
             this.ry = ry;
             //recalculate angle
             this.angle = 2 * (float) Math.atan2(this.ry, this.w);
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getRZ() {
@@ -218,7 +218,7 @@ public class PhysicalEntity
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
             this.rz = rz;
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getW() {
@@ -232,7 +232,7 @@ public class PhysicalEntity
             this.w = w;
             //recalculate angle
             this.angle = 2 * (float) Math.atan2(this.ry, this.w);
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
         }
     }
     synchronized public float getAngle()
@@ -246,7 +246,7 @@ public class PhysicalEntity
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
 
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
             this.angle = a;
 
             //convert to (left handed) quaternion
@@ -271,7 +271,7 @@ public class PhysicalEntity
         float elapsedTime = (float) (Clock.getTime() - this.lastUpdateTime);
         this.x += (float) Math.sin(this.angle)*getSpeedForCurrentAnimation()*elapsedTime/1000.0f;
         this.z += (float) Math.cos(this.angle)*getSpeedForCurrentAnimation()*elapsedTime/1000.0f;
-        this.lastUpdateTime = Clock.getTime();
+        setHeadingUpdateTime();
     }
 
      synchronized public float getSpeedForCurrentAnimation()
@@ -287,7 +287,7 @@ public class PhysicalEntity
     {
           if(speed != this.speedForCurrentAnimation)
           {
-            this.lastUpdateTime = Clock.getTime();
+            setHeadingUpdateTime();
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
             this.speedForCurrentAnimation = speed;
