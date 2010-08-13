@@ -50,6 +50,7 @@ public class RequestDispatcher extends AbstractExtension{
         requestHandlers = new HashMap<String, String>();
         requestHandlers.put("h", "MovementRequestHandler");
         requestHandlers.put("a", "ActionRequestHandler");
+        requestHandlers.put("c", "ClockRequestHandler");
 
         internalEventHandlers = new HashMap<String, String>();
         internalEventHandlers.put("userJoin", "JoinEventHandler");

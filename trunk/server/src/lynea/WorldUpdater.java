@@ -1,6 +1,5 @@
 package lynea;
 
-import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 
 import lynea.npc.NPC;
 
