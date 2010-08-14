@@ -12,7 +12,6 @@ public class NetworkController : MonoBehaviour {
 	public static SmartFoxClient GetClient() {
 		return SmartFox.Connection;
 	}
-	
 	public static String GetExtensionName()
 	{
 		return "lyneaServer";
