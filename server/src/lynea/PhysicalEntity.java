@@ -48,8 +48,11 @@ public class PhysicalEntity
         int uid = animationReceiver.getUser().getUserId();
         if(!animationAlreadySent.contains(uid))
         {
-            animationAlreadySent.add(uid);
-            return true;
+            if(Player.connected.get(uid).canReceive())
+            {
+                animationAlreadySent.add(uid);
+                return true;
+            }
         }
         return false;
     }
@@ -70,8 +73,11 @@ public class PhysicalEntity
         int uid = headingReceiver.getUser().getUserId();
         if(!headingAlreadySent.contains(uid))
         {
-            headingAlreadySent.add(uid);
-            return true;
+            if(Player.connected.get(uid).canReceive())
+            {
+                headingAlreadySent.add(uid);
+                return true;
+            }
         }
         return false;
     }

@@ -31,6 +31,7 @@ public class Player extends PhysicalEntity implements AssetOwner
     private User user;
 
     public static float walkSpeed = 2.0f;
+    private boolean canReceiveHeadings = false;
     
     /**
      * retreive all Players from database and create the corresponding Players objects
@@ -80,6 +81,7 @@ public class Player extends PhysicalEntity implements AssetOwner
         }
         return ll;
     }
+
 
     public Player(User user)
     {
@@ -133,5 +135,13 @@ public class Player extends PhysicalEntity implements AssetOwner
             SetSpeedForCurrentAnimation(0);
         else if(animation.equals("walk"))
             SetSpeedForCurrentAnimation(Player.walkSpeed);
+    }
+
+    public void setCanReceive(boolean b) {
+        canReceiveHeadings = b;
+    }
+    public boolean canReceive()
+    {
+        return canReceiveHeadings;
     }
 }

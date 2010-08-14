@@ -37,25 +37,24 @@ public class WorldSender
     {
         for(Player receiver : Player.connected.values())
         {
-            //if(!receiver.canReceive())
-            //    continue;
-            sendPlayerHeadingsToReceiver(receiver, false);
+            if(receiver.canReceive())
+                sendPlayerHeadingsToReceiver(receiver, false);
         }
     }
     private void sendAllPlayerActions()
     {
         for(Player receiver : Player.connected.values())
         {
-            //if(!receiver.canReceive())
-            //    continue;
-            sendPlayerActionsToReceiver(receiver, false);
+            if(receiver.canReceive())
+                sendPlayerActionsToReceiver(receiver, false);
         }
     }
     private void sendAllNPCHeadings()
     {
         for(Player receiver : Player.connected.values())
         {
-            sendNPCHeadingsToReceiver(receiver);
+            if(receiver.canReceive())
+                sendNPCHeadingsToReceiver(receiver);
         }
 
     }
@@ -63,7 +62,8 @@ public class WorldSender
     {
         for(Player receiver : Player.connected.values())
         {
-            sendNPCActionsToReceiver(receiver);
+            if(receiver.canReceive())
+                sendNPCActionsToReceiver(receiver);
         }
         
     }
@@ -232,7 +232,6 @@ public class WorldSender
             double z = (double) npc.getZ();
             double alpha = (double) npc.getAngle();
             double t = (double) npc.getHeadingUpdateTime();
-            System.out.println("t="+t);
             double s = (double) npc.getSpeedForCurrentAnimation();
             
             ActionscriptObject nearNPCAO = new ActionscriptObject();
@@ -249,8 +248,15 @@ public class WorldSender
             nearNPCAO.put("n", npc.getName());
             arrNPCs.put(String.valueOf(i), nearNPCAO);
             i++;
-            System.out.println("DEBUG: sending NPC heading p=("+(double)((int)(100*x))/100+","+(double)((int)(100*y))/100+","+(double)((int)(100*z))/100+") angle="+(double)((int)(100*alpha/Math.PI*180))/100+String.valueOf(receiver.getUser().getUserId()));
-
+            String sent = "Sending NPC heading "
+                    +"pos=("+(double)((int)(100*x))/100+","
+                    +(double)((int)(100*y))/100+","
+                    +(double)((int)(100*z))/100+") "
+                    + "angle="+(double)((int)(100*alpha))/100+" "
+                    + "speed="+(double)((int)(100*s))/100+" "
+                    + "time="+(double)((int)(100*t))/100+" "
+                    + "to "+receiver.getUser().getName();
+            System.out.println(sent);
         }
         res.put("p",arrNPCs);
 

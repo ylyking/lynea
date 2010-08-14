@@ -40,13 +40,13 @@ public class NPC extends PhysicalEntity
     {
         all = new ArrayList<NPC>();
         NPC testNPC = new NPC(Player.all.get("oli"));
-        testNPC.setPosition(-16.0f, 0.0f, -17.0f);
+        testNPC.setPosition(-5.0f, 0.0f, 5.0f);
         all.add(testNPC);
 
         WaitAction wait0 = new WaitAction("Wait0", testNPC, 30);
         testNPC.addAction(wait0);
-        ActionMark start1 = new ActionMark(-16.0f,0.0f,-17.0f, Player.all.get("oli"), true);
-        ActionMark finish1 = new ActionMark(13.0f,0.0f,14.0f, Player.all.get("oli"), true);
+        ActionMark start1 = new ActionMark(-5.0f,0.0f,5.0f, Player.all.get("oli"), true);
+        ActionMark finish1 = new ActionMark(5.0f,0.0f,5.0f, Player.all.get("oli"), true);
         MoveAction move1 = new MoveAction("Move1", testNPC, start1, finish1);
         testNPC.addAction(move1);
         WaitAction wait1 = new WaitAction("Wait1", testNPC, 3);
