@@ -25,12 +25,22 @@ public class MovementRequestHandler implements IRequestHandler
 
     public void onRequest(ActionscriptObject ao, User user, int fromRoom)
     {
-            //extension.trace("DEBUG: rcvd transform from uid="+String.valueOf(user.getUserId()));
             float x = (float) ao.getNumber("x");
             float y = (float) ao.getNumber("y");
             float z = (float) ao.getNumber("z");
             float alpha = (float) ao.getNumber("a");
             long t = (long) ao.getNumber("t");
+            float speed = (float) ao.getNumber("s");//no yet used
+            
+            long accelerationTime = (long) ao.getNumber("at");//no yet used
+            float endSpeed;//no yet used
+            if (accelerationTime > 0)
+                endSpeed = (float) ao.getNumber("es");
+            else
+            {
+                endSpeed = -1;
+                accelerationTime = -1;
+            }
 
             //no validating for the moment
             //TODO: validate received transform
@@ -38,8 +48,13 @@ public class MovementRequestHandler implements IRequestHandler
             Player.connected.get(uid).setPosition(x, y, z);
             Player.connected.get(uid).setAngle(alpha);
             Player.connected.get(uid).setHeadingUpdateTime(t);
-            
-            //System.out.println("DEBUG: sav pos=("+x+","+y+","+z+") alpha=(,"+((double)((int)alpha/Math.PI*180*100))/100+")");
+
+            float aa = ((float)Math.round(alpha * 1000))/1000;
+            float xx = ((float)Math.round(x * 1000))/1000;
+            float yy = ((float)Math.round(y * 1000))/1000;
+            float zz = ((float)Math.round(z * 1000))/1000;
+            float ss = ((float)Math.round(speed * 1000))/1000;
+            System.out.println("SAV pos=("+xx+","+yy+","+zz+") alpha=("+aa+") s=("+ss+")");
     }
 
 }
