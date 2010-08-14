@@ -8,6 +8,7 @@ package lynea;
 /**
  *
  * @author Olivier
+ * 
  */
 public interface AssetOwner
 {
