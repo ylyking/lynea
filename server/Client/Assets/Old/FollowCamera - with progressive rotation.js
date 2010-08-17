@@ -4,7 +4,7 @@ var distance = 5.0;
 var height = 6.0;
 var smoothLag = 0.2;
 var maxSpeed = 10.0;
-var snapLag = 0.5;
+var snapLag = 0.3;
 var clampHeadPositionScreenSpace = 0.75;
 var lineOfSightMask : LayerMask = 0;
 
@@ -14,10 +14,6 @@ private var centerOffset = Vector3.zero;
 private var controller : ThirdPersonController;
 private var velocity = Vector3.zero;
 private var targetHeight = 100000.0;
-//NEW:
-private var up = Vector3.forward;
-private var targetAngle;
-private var targetSaved = false;
 
 function Awake ()
 {
@@ -70,36 +66,27 @@ function LateUpdate () {
 	}
 	else
 	{
-		//OLD: ApplyPositionDamping (Vector3(targetCenter.x, targetHeight, targetCenter.z));
-		//NEW:
-		MoveCamera(targetCenter);
+		ApplyPositionDamping (Vector3(targetCenter.x, targetHeight, targetCenter.z));
 	}
 	
 	SetUpRotation(targetCenter, targetHead);
-	
 }
 
 function ApplySnapping (targetCenter : Vector3)
 {
 	var position = transform.position;
-	//var offset = position - targetCenter;
-	//offset.y = 0;
-	//var currentDistance = offset.magnitude;
+	var offset = position - targetCenter;
+	offset.y = 0;
+	var currentDistance = offset.magnitude;
 
-	if(!targetSaved)
-	{
-		//NEW: set the current player direction the new up direction
-		up = target.transform.TransformDirection(Vector3.forward);
-		targetAngle = target.eulerAngles.y;
-		targetSaved = true;
-	}
+	var targetAngle = target.eulerAngles.y;
 	var currentAngle = transform.eulerAngles.y;
 
 	currentAngle = Mathf.SmoothDampAngle(currentAngle, targetAngle, velocity.x, snapLag);
-	//currentDistance = Mathf.SmoothDamp(currentDistance, distance, velocity.z, snapLag);
-	
+	currentDistance = Mathf.SmoothDamp(currentDistance, distance, velocity.z, snapLag);
+
 	var newPosition = targetCenter;
-	newPosition += Quaternion.Euler(0, currentAngle, 0) * Vector3.back * distance;
+	newPosition += Quaternion.Euler(0, currentAngle, 0) * Vector3.back * currentDistance;
 
 	newPosition.y = Mathf.SmoothDamp (position.y, targetCenter.y + height, velocity.y, smoothLag, maxSpeed);
 
@@ -108,9 +95,8 @@ function ApplySnapping (targetCenter : Vector3)
 	transform.position = newPosition;
 	
 	// We are close to the target, so we can stop snapping now!
-	if (AngleDistance (currentAngle, targetAngle) <= 0.1)
+	if (AngleDistance (currentAngle, targetAngle) < 3.0)
 	{
-		targetSaved = false;
 		isSnapping = false;
 		velocity = Vector3.zero;
 	}
@@ -127,16 +113,6 @@ function AdjustLineOfSight (newPosition : Vector3, target : Vector3)
 	return newPosition;
 }
 
-function MoveCamera(targetCenter : Vector3)
-{
-	//transform.position.z = target.transform.position.z - distance;
-	//transform.position.x = target.transform.position.x;
-	//NEW:
-	transform.position.z = targetCenter.z - distance * up.z;
-	transform.position.x = targetCenter.x - distance * up.x;
-}
-/*
-OLD:
 function ApplyPositionDamping (targetCenter : Vector3)
 {
 	// We try to maintain a constant distance on the x-z plane with a spring.
@@ -154,7 +130,7 @@ function ApplyPositionDamping (targetCenter : Vector3)
 	newPosition = AdjustLineOfSight(newPosition, targetCenter);
 	
 	transform.position = newPosition;
-}*/
+}
 
 function SetUpRotation (centerPos : Vector3, headPos : Vector3)
 {
@@ -208,11 +184,5 @@ function AngleDistance (a : float, b : float)
 	
 	return Mathf.Abs(b - a);
 }
-
-function GetUpDirection() : Vector3
-{
-	return up;
-}
-
 
 @script AddComponentMenu ("Third Person Camera/Spring Follow Camera")

@@ -104,7 +104,7 @@ public class WorldSender
                 nearPlayerAO.put("n", p.getName());
                 arrPlayers.put(String.valueOf(i), nearPlayerAO);
                 i++;
-                //extension.trace("DEBUG: put heading of user"+String.valueOf(p.getUser().getUserId()));
+                extension.trace("DEBUG: put heading of user "+String.valueOf(p.getUser().getUserId())+" t="+t);
             }
         }
         res.put("p",arrPlayers);

@@ -54,7 +54,8 @@ public class MovementRequestHandler implements IRequestHandler
             float yy = ((float)Math.round(y * 1000))/1000;
             float zz = ((float)Math.round(z * 1000))/1000;
             float ss = ((float)Math.round(speed * 1000))/1000;
-            System.out.println("SAV pos=("+xx+","+yy+","+zz+") alpha=("+aa+") s=("+ss+")");
+
+            System.out.println("SAV pos=("+xx+","+yy+","+zz+") alpha=("+aa+") s=("+ss+") t=("+t+")");
     }
 
 }
