@@ -5,7 +5,7 @@ using System;
 
 public class HeadingSender : MonoBehaviour {
 
-	public float sendingPeriod = 0.2f;
+	public float sendingPeriod = 0.1f;
 	private float timeSinceLastSending = 0.0f;
 	
 	private bool sendMode = false;
@@ -47,9 +47,8 @@ public class HeadingSender : MonoBehaviour {
 			Heading current = new Heading();
 			current.InitFromValues(currPos, currAngle, currTime, currSpeed);
 			bool headingChanged = !current.IsFutureOf(lastState);
-			Debug.Log("send?"+headingChanged+", oldspeed="+lastState.GetSpeed().magnitude+", curspeed="+currSpeed); 
+			//Debug.Log("send?"+headingChanged+", time="+currTime); 
 			
-
 			if(headingChanged)
 			{
 				lastState = current;

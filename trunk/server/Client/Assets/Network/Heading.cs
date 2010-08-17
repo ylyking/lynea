@@ -157,7 +157,7 @@ public class Heading {
 		data.Add("y", this.position.y);
 		data.Add("z", this.position.z);
 		data.Add("a", this.angle);
-		data.Add("t", this.time);
+		data.Add("t", Convert.ToDouble(this.time));
 		data.Add("s", this.speed);
 		if(isAccelerating)
 		{
@@ -185,7 +185,8 @@ public class Heading {
 	public bool IsFutureOf(Heading old)
 	{
 		//if (!objPos.Equals(lastPos) || objAngle != lastAngle || objSpeed != lastSpeed) 
-
+		if(old == null)
+			return false;
 		//time elapsed between this heading and the old one
 		float elapsed = (float)(GetTime() - old.GetTime())/1000.0f;
 		float elapsed2 = 0;

@@ -35,13 +35,9 @@ private var slammed = false;
 
 private var isControllable = true;
 
-private var up = Vector3.forward;
-private var followCameraComponent;
-
 function Awake ()
 {
 	moveDirection = transform.TransformDirection(Vector3.forward);
-	followCameraComponent = Camera.main.GetComponent("FollowCamera");
 }
 
 
@@ -50,9 +46,8 @@ function UpdateSmoothedMovementDirection ()
 	var cameraTransform = Camera.main.transform;
 	
 	// World Coords of {Forward vector relative to the camera} along the x-z plane	
-	//OLD : var forward = cameraTransform.TransformDirection(Vector3.forward);
-	//NEW:
-	var forward = followCameraComponent.GetUpDirection();
+	var forward = cameraTransform.TransformDirection(Vector3.forward);
+	//TODO? : support for var forward = Vector3.forward;
 	
 	forward.y = 0;
 	forward = forward.normalized;
@@ -119,10 +114,9 @@ function UpdateSmoothedMovementDirection ()
 		targetSpeed *= walkSpeed;
 	}
 	
-	//OLD: Smooth the speed based on the current target direction
+	// Smooth the speed based on the current target direction
 	//var curSmooth = speedSmoothing * Time.deltaTime;
 	//moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
-	//NEW:
 	moveSpeed = targetSpeed;
 	
 	// Reset walk time start when we slow down
