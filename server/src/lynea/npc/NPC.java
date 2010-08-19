@@ -13,6 +13,7 @@ import lynea.AssetOwner;
 import lynea.npc.actions.ActionGroup;
 import lynea.npc.actions.Action;
 import lynea.PhysicalEntity;
+import lynea.WorldUpdater;
 import lynea.npc.actions.ActionMark;
 import lynea.npc.actions.MoveAction;
 import lynea.npc.actions.WaitAction;
@@ -24,7 +25,8 @@ import lynea.player.Player;
  */
 public class NPC extends PhysicalEntity
 {
-    public static final float walkSpeed = 1.8f;
+    public static float walkSpeed = 1.8f;
+    public static final int maxStopTime = 100; //in milliseconds
 
     private ActionGroup rootActionGroup;
     static private long maxID = 0;
@@ -43,13 +45,13 @@ public class NPC extends PhysicalEntity
         testNPC.setPosition(-5.0f, 0.0f, 5.0f);
         all.add(testNPC);
 
-        WaitAction wait0 = new WaitAction("Wait0", testNPC, 30);
+        WaitAction wait0 = new WaitAction("Wait0", testNPC, 25000);
         testNPC.addAction(wait0);
         ActionMark start1 = new ActionMark(-5.0f,0.0f,5.0f, Player.all.get("oli"), true);
         ActionMark finish1 = new ActionMark(5.0f,0.0f,5.0f, Player.all.get("oli"), true);
         MoveAction move1 = new MoveAction("Move1", testNPC, start1, finish1);
         testNPC.addAction(move1);
-        WaitAction wait1 = new WaitAction("Wait1", testNPC, 3);
+        WaitAction wait1 = new WaitAction("Wait1", testNPC, 3000);
         testNPC.addAction(wait1);
         /*ActionMark start2 = new ActionMark(13.0,0.0,14.0, Player.all.get("oli"), true);
         ActionMark finish2 = new ActionMark(-14.0,0.0,15.0, Player.all.get("oli"), true);
@@ -70,8 +72,10 @@ public class NPC extends PhysicalEntity
 
         testNPC.startAction();
     }
-    public static void updateAll(double deltaTime)
+    public static void updateAll(int deltaTime)
     {
+        if(all == null)
+            return;
         for(NPC npc : all)
         {
             npc.updateAction(deltaTime);
@@ -113,7 +117,7 @@ public class NPC extends PhysicalEntity
        return interruptListeners;
     }
 
-    public boolean updateAction(double deltaTime)
+    public boolean updateAction(int deltaTime)
     {      
         return rootActionGroup.update(deltaTime);
     }
@@ -132,8 +136,19 @@ public class NPC extends PhysicalEntity
     {
         super.setAnimation(animation);
         if (animation.equals("idle1"))
-            SetSpeedForCurrentAnimation(0.0f);
+            setSpeed(0.0f);
         else if(animation.equals("walk"))
-            SetSpeedForCurrentAnimation(NPC.walkSpeed);
+            setSpeed(NPC.walkSpeed);
     }
+
+    public void stop(long stopTime)
+    {
+        //if no stopTime is provided, use the default NPC.maxStopTime
+        stopTime = (stopTime>0) ? stopTime : NPC.maxStopTime;
+        
+        System.out.println("<"+WorldUpdater.getInstance().getSimulationTime()+"> stop");
+        setAccelerationTime(stopTime);
+        setEndSpeed(0);
+    }
+
 }

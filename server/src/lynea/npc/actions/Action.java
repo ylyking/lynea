@@ -47,7 +47,10 @@ public abstract class Action
         return isStarted;
     }
 
-    public boolean update(double deltaTime)
+    /*
+     * @param : deltaTime (int) : in milliseconds
+     */
+    public boolean update(int deltaTime)
     {
         if (!isStarted() || isEnded())
         {

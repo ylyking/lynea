@@ -19,6 +19,11 @@ public class Clock
     {
         serverstart = Calendar.getInstance();
     }
+    /*
+     * This method gives the server REAL time. It should be used by
+     * WorldUpdater.run() only. Other classes should use the server SIMULATION
+     * time. You can get it by using WorldUpdater.getInstance().getSimulationTime()
+     */
     public static long getTime()
     {
         if (serverstart == null)

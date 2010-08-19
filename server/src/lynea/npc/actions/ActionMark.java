@@ -42,10 +42,6 @@ public class ActionMark extends PhysicalEntity implements Cloneable
         }
     }
 
-    float distance(ActionMark other) {
-        return (float) Math.sqrt((other.x-x)*(other.x-x)+(other.y-y)*(other.y-y)+(other.z-z)*(other.z-z));
-     }
-
     public void setVisible(boolean status)
     {
         isVisible = status;

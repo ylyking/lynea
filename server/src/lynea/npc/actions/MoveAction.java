@@ -18,13 +18,11 @@ public class MoveAction extends ActionElement implements AttackListener
     private ActionMark begin;
     private ActionMark end;
     private ActionMark current;
-    private float totalTime;
 
     private float speed;
-    private float progress = 0;
-    //private float arrivalProximity = 0.5f;
-
+    private boolean stopping = false;
     private boolean hasBeenAttacked = false;
+    private float stopDistance;
 
     public MoveAction(String name, NPC npc, ActionMark begin, ActionMark end)
     {
@@ -38,25 +36,31 @@ public class MoveAction extends ActionElement implements AttackListener
     }
 
     @Override
-    public boolean update(double deltaTime)
+    public boolean update(int deltaTime)
     {
         if(!super.update(deltaTime))
             return false;
 
         //TODO: path finding
-        //update movement progress (between 0 and 1)
-        progress += deltaTime / totalTime;
-
-        float current_x =  begin.getX() + progress * (end.getX() -  begin.getX());
-        float current_y =  begin.getY() + progress * (end.getY() -  begin.getY());
-        float current_z =  begin.getZ() + progress * (end.getZ() -  begin.getZ());
-        current.setPosition(current_x, current_y, current_z);
         
-        npc.updateHeading();
-        //if (current.distance(end) < arrivalProximity)
-        if (progress >= 1)
-            end();
+        npc.updateHeading(deltaTime);
+        current.setPosition(npc);
 
+        if(!stopping && (current.distance(end) <= stopDistance))
+        {
+            if(current.distance(end)>0)
+            {
+                //calculate the real stop time (<= NPC.maxStopTime) needed to arrive at the destination with zero speed
+                long realStopTime = Math.round(current.distance(end)*2/speed * 1000);
+                npc.stop(realStopTime);
+            }
+            stopping = true;
+        }
+
+        if(stopping && !npc.isAccelerating())
+        {
+            end();
+        }
         return true;
     }
 
@@ -67,9 +71,12 @@ public class MoveAction extends ActionElement implements AttackListener
 
         System.out.println(getName()+".start()");
         npc.setAnimation("walk");
-        speed = npc.getSpeedForCurrentAnimation();
-        totalTime = getTotalTime();
+        speed = npc.getSpeed();
         setNPCInitialHeading();
+
+        float stopTimeInSec = ((float)NPC.maxStopTime)/1000.0f;
+        float stopAcceleration = (0 - speed)/ stopTimeInSec;
+        this.stopDistance = speed * stopTimeInSec + stopAcceleration/2.0f* (float)Math.pow(stopTimeInSec, 2);
     }
 
     @Override
@@ -80,15 +87,10 @@ public class MoveAction extends ActionElement implements AttackListener
         npc.setPosition(this.end);
         super.end();
     }
-
-    private float getTotalTime()
-    {
-       //TODO: path finding
-       return begin.distance(end) / speed;
-    }
+    
     public float getProgress()
     {
-        return progress;
+        return begin.distance(current)/begin.distance(end);
     }
 
     @Override
@@ -114,10 +116,9 @@ public class MoveAction extends ActionElement implements AttackListener
         {
             begin = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
             current = (ActionMark) begin.clone();
-            progress = 0;
             npc.setAnimation("walk");
-            speed = npc.getSpeedForCurrentAnimation();
-            totalTime = getTotalTime();
+            stopping = false;
+            speed = npc.getSpeed();
             setNPCInitialHeading();
             hasBeenAttacked = false;
         }

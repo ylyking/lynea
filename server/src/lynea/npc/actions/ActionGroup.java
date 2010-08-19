@@ -55,7 +55,7 @@ public class ActionGroup extends Action implements Iterable<Action>
     }
 
     @Override
-    public boolean update(double deltaTime)
+    public boolean update(int deltaTime)
     {
         
         if(!super.update(deltaTime))

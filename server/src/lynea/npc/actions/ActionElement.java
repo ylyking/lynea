@@ -20,7 +20,7 @@ public class ActionElement extends Action
     }
     
     @Override
-    public boolean update(double deltaTime)
+    public boolean update(int deltaTime)
     {
         if(!super.update(deltaTime))
             return false;

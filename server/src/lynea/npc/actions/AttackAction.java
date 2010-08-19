@@ -36,7 +36,7 @@ public class AttackAction extends ActionElement
     }
     int counter=0;
     @Override
-    public boolean update(double deltaTime)
+    public boolean update(int deltaTime)
     {
         System.out.println("fight!");
         if(counter++ == 1)
