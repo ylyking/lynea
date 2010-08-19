@@ -77,9 +77,6 @@ public class WorldUpdater implements Runnable
                 simulationTime += worldUpdatePeriod;
                 NPC.updateAll(worldUpdatePeriod);
             }
-            //send urgent information (like movement stops)
-            if(sender != null)
-                sender.SendUrgent();
             long timeAfterUpdate = Clock.getTime();
             if (timeAfterUpdate - timeBeforeUpdate <= (long) sendWorldStatePeriod)
             {

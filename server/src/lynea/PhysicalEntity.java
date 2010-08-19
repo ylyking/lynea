@@ -295,6 +295,7 @@ public class PhysicalEntity
         
         if (isAccelerating())
         {
+
             this.accelerationTime -= deltaTime;
             if(this.accelerationTime > 0)
                 this.speed += this.acceleration * elapsedTimeInSec;
