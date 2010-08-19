@@ -33,15 +33,16 @@ public class RequestDispatcher extends AbstractExtension{
     @Override
     public void init()
     {
+            worldSender = WorldSender.getInstance(this);
+            worldUpdater = WorldUpdater.getInstance(worldSender);
+            worldUpdater.start();
+
             helper = ExtensionHelper.instance();
             currentZone = helper.getZone(this.getOwnerZone());
             initInvocationTable();
             trace("Lynea Extension is initialized");
             Player.init();
             NPC.init();
-            worldSender = new WorldSender(this);
-            worldUpdater = new WorldUpdater(worldSender);
-            worldUpdater.start();
     }
 
 

@@ -10,6 +10,7 @@ import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import it.gotoandplay.smartfoxserver.lib.ActionscriptObject;
 import java.util.LinkedList;
 import lynea.Clock;
+import lynea.WorldUpdater;
 import lynea.player.Player;
 
 /**
@@ -40,7 +41,7 @@ public class ClockRequestHandler implements IRequestHandler
     {
         ActionscriptObject res = new ActionscriptObject();
         res.put("_cmd","c");
-        res.putNumber("t", Clock.getTime());
+        res.putNumber("t", WorldUpdater.getInstance().getSimulationTime());
         LinkedList userList = new LinkedList();
         userList.add(user.getChannel());
         extension.sendResponse(res, -1, null, userList);

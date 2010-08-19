@@ -19,16 +19,16 @@ public class WaitAction extends TimedActionElement implements AttackListener
     private boolean hasBeenAttacked = false;
     private ActionMark waitPosition;
 
-    public WaitAction(String name, NPC npc, double waitSeconds)
+    public WaitAction(String name, NPC npc, long waitMilliSeconds)
     {
-        super(name, npc, waitSeconds);
+        super(name, npc, waitMilliSeconds);
         waitPosition = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
 
         attachListener(this);
     }
 
     @Override
-    public boolean update(double deltaTime)
+    public boolean update(int deltaTime)
     {
         if(!super.update(deltaTime))
             return false;

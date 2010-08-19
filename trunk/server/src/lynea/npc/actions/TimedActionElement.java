@@ -13,13 +13,13 @@ import lynea.npc.NPC;
  */
 public class TimedActionElement extends ActionElement
 {
-    private double timeleft;
+    private long timeleft;
 
     public TimedActionElement(String name, NPC npc)
     {
         super(name, npc);
     }
-   public TimedActionElement(String name, NPC npc, double totalTime)
+   public TimedActionElement(String name, NPC npc, long totalTime)
     {
         super(name, npc);
         if (totalTime > 0 )
@@ -27,7 +27,7 @@ public class TimedActionElement extends ActionElement
     }
 
     @Override
-    public boolean update(double deltaTime)
+    public boolean update(int deltaTime)
     {
         if (!super.update(deltaTime))
             return false;
@@ -41,13 +41,13 @@ public class TimedActionElement extends ActionElement
         return true;
     }
 
-    protected void setTimeLeft(double timeleft)
+    protected void setTimeLeft(long timeleft)
     {
         if((!isStarted() || isPaused()) && timeleft > 0)
             this.timeleft = timeleft;
     }
 
-    public double getTimeLeft()
+    public long getTimeLeft()
     {
         return timeleft;
     }

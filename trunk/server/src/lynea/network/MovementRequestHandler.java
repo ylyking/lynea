@@ -48,6 +48,12 @@ public class MovementRequestHandler implements IRequestHandler
             Player.connected.get(uid).setPosition(x, y, z);
             Player.connected.get(uid).setAngle(alpha);
             Player.connected.get(uid).setHeadingUpdateTime(t);
+            Player.connected.get(uid).setEndSpeed(endSpeed);
+            Player.connected.get(uid).setAccelerationTime(accelerationTime);
+
+
+
+
 
             float aa = ((float)Math.round(alpha * 1000))/1000;
             float xx = ((float)Math.round(x * 1000))/1000;

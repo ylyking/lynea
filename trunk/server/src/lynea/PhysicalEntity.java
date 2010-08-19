@@ -14,6 +14,7 @@ import lynea.player.Player;
  *
  * @author Olivier
  */
+
 public class PhysicalEntity
 {
     protected float x, y, z;
@@ -24,7 +25,15 @@ public class PhysicalEntity
     private String name;
     protected long lastUpdateTime; //server time (in ms) of the last heading update
     private float angle = 0; //angle between the local z axis and the global z axis
-    private float speedForCurrentAnimation = 0;
+    private float speed = 0;
+
+    private float endSpeed = -1;
+    private long accelerationTime = -1;
+    private float acceleration = 0;
+    private float initialSpeed = -1;
+    private long initialTime = -1;
+    private Vector3 initialPosition = null;
+
 
     synchronized public long getHeadingUpdateTime() {
         return this.lastUpdateTime;
@@ -35,7 +44,7 @@ public class PhysicalEntity
     }
     synchronized public void setHeadingUpdateTime()
     {
-        this.lastUpdateTime = Clock.getTime();
+        this.lastUpdateTime = WorldUpdater.getInstance().getSimulationTime();
     }
     synchronized public void setName(String name){
         this.name = name;
@@ -267,39 +276,155 @@ public class PhysicalEntity
 
     /*
      * Move the entity position in the direction defined by the angle attribute
-     * at a speed given as by getSpeedForCurrentAnimation() and during a period which is
+     * at a speed given as by getSpeed() and during a period which is
      * the elasped time since the last heading update. 
      *
      * This movement does not result in a clearing of the headingAlreadySent vector
      */
-    synchronized public void updateHeading()
+    synchronized public void updateHeading(int deltaTime)
     {
-        float elapsedTime = (float) (Clock.getTime() - this.lastUpdateTime);
-        this.x += (float) Math.sin(this.angle)*getSpeedForCurrentAnimation()*elapsedTime/1000.0f;
-        this.z += (float) Math.cos(this.angle)*getSpeedForCurrentAnimation()*elapsedTime/1000.0f;
-        setHeadingUpdateTime();
+
+        //float lastUpdateTimeInSec = ((float) getHeadingUpdateTime()) / 1000.0f;
+        setHeadingUpdateTime(WorldUpdater.getInstance().getSimulationTime());
+        float currentUpdateTimeInSec = ((float) getHeadingUpdateTime()) / 1000.0f;
+
+        float elapsedTimeInSec = ((float) deltaTime) / 1000.0f;
+        float timeSinceAccelerationInSec = currentUpdateTimeInSec - ((float)initialTime) / 1000.0f;
+        //float lastTimeSinceAccelerationInSec = lastUpdateTimeInSec - ((float)initialTime) / 1000.0f;
+
+        
+        if (isAccelerating())
+        {
+            this.accelerationTime -= deltaTime;
+            if(this.accelerationTime > 0)
+                this.speed += this.acceleration * elapsedTimeInSec;
+            else
+            {
+                this.speed = this.endSpeed;
+                this.acceleration = 0;
+                this.accelerationTime = -1;
+                this.initialSpeed = -1;
+                this.initialTime = -1;
+            }
+        }
+        //float savex = this.x;
+        if(isAccelerating())
+        {
+            //these commented equations can be used instead of the ones not commented below
+            //this.x += (float) Math.sin(this.angle)* this.initialSpeed * elapsedTimeInSec;
+            //this.x += (float) Math.sin(this.angle)* this.acceleration/2.0f * elapsedTimeInSec * (timeSinceAccelerationInSec+lastTimeSinceAccelerationInSec);
+            //this.z +=(float) Math.cos(this.angle)* this.initialSpeed * elapsedTimeInSec;
+            //this.z += (float) Math.cos(this.angle)* this.acceleration/2.0f * elapsedTimeInSec * (timeSinceAccelerationInSec+lastTimeSinceAccelerationInSec);
+            this.x = initialPosition.x
+            + (float) Math.sin(this.angle)* this.initialSpeed * timeSinceAccelerationInSec
+            + (float) Math.sin(this.angle)* this.acceleration/2 * (float) Math.pow(timeSinceAccelerationInSec, 2);
+
+            this.z = initialPosition.z
+            + (float) Math.sin(this.angle)* this.initialSpeed * timeSinceAccelerationInSec
+            + (float) Math.sin(this.angle)* this.acceleration/2 * (float) Math.pow(timeSinceAccelerationInSec, 2);
+
+        }
+        else
+        {
+            this.x +=(float) Math.sin(this.angle)* this.speed * elapsedTimeInSec;
+            this.z +=(float) Math.cos(this.angle)* this.speed * elapsedTimeInSec;
+        }
+
+        // System.out.println(
+        //        "x: "+savex+"->"+this.x+" speed_x:"+speed
+        //       );
+  
     }
 
-     synchronized public float getSpeedForCurrentAnimation()
+
+     synchronized public float getSpeed()
     {
         if(getAnimation() != null)
         {
-            return this.speedForCurrentAnimation;
+            return this.speed;
         }
         return 0;
     }
 
-     synchronized protected void SetSpeedForCurrentAnimation(float speed)
+     synchronized protected void setSpeed(float speed)
     {
-          if(speed != this.speedForCurrentAnimation)
+          if(speed != this.speed)
           {
             setHeadingUpdateTime();
             if(!headingAlreadySent.isEmpty())
                 headingAlreadySent.clear();
-            this.speedForCurrentAnimation = speed;
+            this.speed = speed;
           }
     }
 
+    synchronized public void setEndSpeed(float endSpeed)
+    {
+        if(this.endSpeed != endSpeed)
+        {
+            this.endSpeed = endSpeed;
+            setHeadingUpdateTime();
+            if(!headingAlreadySent.isEmpty())
+                headingAlreadySent.clear();
+            setupAcceleration();
+         }
+    }
 
+    synchronized public void setAccelerationTime(long accelerationTime)
+    {
+        
+        if(this.accelerationTime != accelerationTime)
+        {
+            this.accelerationTime = accelerationTime;
+            setHeadingUpdateTime();
+            if(!headingAlreadySent.isEmpty())
+                headingAlreadySent.clear();
+            setupAcceleration();
+        }
+    }
+
+    private void setupAcceleration()
+    {
+        boolean isAccelerating = (this.endSpeed >= 0 && this.accelerationTime > 0);
+        this.acceleration = isAccelerating ? (this.endSpeed - getSpeed())/((float)this.accelerationTime/1000.0f) : 0;
+        this.initialSpeed = isAccelerating ? getSpeed() : -1;
+        this.initialTime = isAccelerating ? WorldUpdater.getInstance().getSimulationTime() : -1;
+        this.initialPosition = new Vector3(this.x, this.y, this.z);
+    }
+
+    synchronized public boolean isAccelerating()
+    {
+        return (this.acceleration != 0);
+    }
+    
+    synchronized public long getAccelerationTime()
+    {
+        return this.accelerationTime;
+    }
+    
+    synchronized public float getEndSpeed()
+    {
+        return this.endSpeed;
+    }
+
+
+    public float getAcceleration() {
+        return acceleration;
+    }
+
+    //TODO : integrate this class everywhere it can be 
+    public class Vector3
+    {
+        public float x,y,z;
+        public Vector3(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    public float distance(PhysicalEntity other) {
+        return (float) Math.sqrt((other.getX()-x)*(other.getX()-x)+(other.getY()-y)*(other.getY()-y)+(other.getZ()-z)*(other.getZ()-z));
+     }
     
 }

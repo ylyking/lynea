@@ -1,6 +1,7 @@
 package lynea;
 
 
+import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import lynea.npc.NPC;
 
 
@@ -15,15 +16,48 @@ import lynea.npc.NPC;
  */
 public class WorldUpdater implements Runnable
 {
+    private static WorldUpdater instance = null;
     private Thread thread;
-    private double worldUpdatePeriod = 0.01;
-    private double sendWorldStatePeriod = 0.2;
+    private int worldUpdatePeriod = 10; //in milliseconds
+    private int sendWorldStatePeriod = 100; //in milliseconds
     private WorldSender sender;
+    private long simulationTime;
 
-    public WorldUpdater(WorldSender sender)
+    private WorldUpdater(WorldSender sender)
     {
-        this.sender = sender;
+        if (sender != null)
+        {
+            System.out.println("Creating WorldUpdater WITH ability to send world states to players");
+            this.sender = sender;
+        }
+        else
+        {
+            System.out.println("Creating WorldUpdater WITHOUT ability to send world states to players [TEST MODE]");
+
+        }
         thread = new Thread(this, "WorldUpdateThread");
+    }
+    private WorldUpdater()
+    {
+        this(null);
+    }
+    public long getSimulationTime()
+    {
+        return simulationTime;
+    }
+
+
+    public static WorldUpdater getInstance(WorldSender sender)
+    {
+        if (instance == null)
+            instance = new WorldUpdater(sender);
+        return instance;
+    }
+    public static WorldUpdater getInstance()
+    {
+        if (instance == null)
+            instance = new WorldUpdater();
+        return instance;
     }
 
     public void start()
@@ -34,19 +68,24 @@ public class WorldUpdater implements Runnable
     {
         while(true)
         {
-            long timeBeforeUpdate = System.currentTimeMillis();
-            sender.sendWorldState();
+            long timeBeforeUpdate = Clock.getTime();
+            simulationTime = timeBeforeUpdate;
+            if(sender != null)
+                sender.sendWorldState();
             for (int worldIteration = 0; worldIteration < sendWorldStatePeriod/worldUpdatePeriod; worldIteration++)
             {
+                simulationTime += worldUpdatePeriod;
                 NPC.updateAll(worldUpdatePeriod);
             }
-            long timeAfterUpdate = System.currentTimeMillis();
-            if (timeAfterUpdate - timeBeforeUpdate <= (long) (sendWorldStatePeriod*1000))
+            //send urgent information (like movement stops)
+            if(sender != null)
+                sender.SendUrgent();
+            long timeAfterUpdate = Clock.getTime();
+            if (timeAfterUpdate - timeBeforeUpdate <= (long) sendWorldStatePeriod)
             {
                 try
                 {
-                    Thread.sleep((long) (sendWorldStatePeriod*1000) - timeAfterUpdate + timeBeforeUpdate);
-
+                    Thread.sleep((long) sendWorldStatePeriod - timeAfterUpdate + timeBeforeUpdate);
                 }
                 catch(InterruptedException e)
                 {
@@ -55,6 +94,11 @@ public class WorldUpdater implements Runnable
             }
             
         }
+    }
+
+    public void addSimulationTime(long time)
+    {
+        simulationTime += time;
     }
 
 
