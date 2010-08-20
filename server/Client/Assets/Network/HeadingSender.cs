@@ -38,14 +38,26 @@ public class HeadingSender : MonoBehaviour {
 
 		if (timeSinceLastSending >= sendingPeriod) 
 		{
+			Heading current = new Heading();
+			
 			Vector3 currPos = transform.position;
 			float currAngle = Convert.ToSingle(2*Math.Atan2(transform.rotation.y, transform.rotation.w));
 			ThirdPersonController playerController = GetComponent<ThirdPersonController>();
 			float currSpeed = playerController.GetSpeed();
 			long currTime = ServerClock.GetTime();
 			
-			Heading current = new Heading();
-			current.InitFromValues(currPos, currAngle, currTime, currSpeed);
+			if (playerController.IsAccelerating())
+			{
+				float currEndSpeed = playerController.GetEndSpeed();
+				long currAccelerationTime = playerController.GetAccelerationTime();
+				current.InitFromValues(currPos, currAngle, currTime, currSpeed, currEndSpeed, currAccelerationTime);
+			}
+			else
+			{
+				current.InitFromValues(currPos, currAngle, currTime, currSpeed);
+			}
+			
+			
 			bool headingChanged = !current.IsFutureOf(lastState);
 			//Debug.Log("send?"+headingChanged+", time="+currTime); 
 			
