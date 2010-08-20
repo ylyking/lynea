@@ -17,7 +17,7 @@ public class ServerClock
 	static private ArrayList deltas;
 	
 	//max number of deltas to keep track of
-	static private int maxDeltas =10;
+	static private int maxDeltas =20;
 	
 	//the best computed offset to getTimer based on the information we have
 	static private long syncTimeDelta; 
@@ -165,7 +165,7 @@ public class ServerClock
 	 */
 	private static void AddTimeDelta(long clientSendTime, long clientReceiveTime, long serverTime)
 	{
-		Debug.Log("AddTimeDelta()");
+		//Debug.Log("AddTimeDelta()");
 		//guess the latency
 		int latency = (int) (clientReceiveTime - clientSendTime) / 2;
 		
@@ -186,7 +186,7 @@ public class ServerClock
 	 */
 	private static void Recalculate()
 	{
-		Debug.Log("Recalculate()");
+		//Debug.Log("Recalculate()");
 		//grab a copy of the deltas array
 		Array tmp_deltas = deltas.ToArray(typeof(TimeDelta));
 		
@@ -355,6 +355,11 @@ public class ServerClock
 	public static void SendServerClockReady()
 	{
 		Debug.Log("Sending ClockReady !!");
+		foreach(TimeDelta td in deltas)
+		{
+			Debug.Log("latency="+td.GetLatency()+ " timeSyncDelta="+td.GetTimeSyncDelta());
+		}
+		Debug.Log("this.syncTimeDelta=" + syncTimeDelta);
 		SmartFoxClient client = NetworkController.GetClient();
 		string extensionName = NetworkController.GetExtensionName();
 	

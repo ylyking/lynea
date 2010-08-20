@@ -72,7 +72,7 @@ public class MoveActionTest {
     public void testUpdate()
     {
         System.out.println("*Test MoveAction.update");
-        int deltaTime = 10;
+        int deltaTime = 1;
         float deltaTimeInSec = (float)deltaTime / 1000.0f;
 
         //cannot update if not started
@@ -102,6 +102,7 @@ public class MoveActionTest {
         {
             WorldUpdater.getInstance().addSimulationTime(deltaTime);
             assertTrue(npc.updateAction(deltaTime));
+            System.out.println("x = "+npc.getX()+" s = "+npc.getSpeed());
         }
         WorldUpdater.getInstance().addSimulationTime(deltaTime);
         //the move is ended

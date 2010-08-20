@@ -45,7 +45,7 @@ public class NPC extends PhysicalEntity
         testNPC.setPosition(-5.0f, 0.0f, 5.0f);
         all.add(testNPC);
 
-        WaitAction wait0 = new WaitAction("Wait0", testNPC, 25000);
+        WaitAction wait0 = new WaitAction("Wait0", testNPC, 7000);
         testNPC.addAction(wait0);
         ActionMark start1 = new ActionMark(-5.0f,0.0f,5.0f, Player.all.get("oli"), true);
         ActionMark finish1 = new ActionMark(5.0f,0.0f,5.0f, Player.all.get("oli"), true);

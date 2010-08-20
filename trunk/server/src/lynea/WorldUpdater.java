@@ -18,7 +18,7 @@ public class WorldUpdater implements Runnable
 {
     private static WorldUpdater instance = null;
     private Thread thread;
-    private int worldUpdatePeriod = 10; //in milliseconds
+    private int worldUpdatePeriod = 1; //in milliseconds
     private int sendWorldStatePeriod = 100; //in milliseconds
     private WorldSender sender;
     private long simulationTime;

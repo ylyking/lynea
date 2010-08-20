@@ -40,6 +40,13 @@ public class Heading {
 		SetTime(time);
 		SetSpeed(speed, -1, -1);
 	}
+	public void InitFromValues(Vector3 position, float angle, long time, float speed, float endSpeed, long accelerationTime)
+	{
+		SetPosition(position);
+		SetAngle(angle);
+		SetTime(time);
+		SetSpeed(speed, endSpeed, accelerationTime);
+	}
 	public void SetPosition(Vector3 pos)
 	{
 		this.position.x = pos.x;
@@ -104,7 +111,7 @@ public class Heading {
 			this.accelerationTime = accelerationTime;
 		}
 		if(this.isAccelerating)
-			this.acceleration = (this.endSpeed - this.speed)/this.accelerationTime;
+			this.acceleration = (this.endSpeed - this.speed)/((float)this.accelerationTime/1000.0f);
 		else
 			this.acceleration = 0;
 	}
@@ -145,7 +152,9 @@ public class Heading {
 	}
 	public Vector3 GetEndSpeed()
 	{
-		return new Vector3(Convert.ToSingle(endSpeed * Math.Sin(angle)), 0, Convert.ToSingle(endSpeed * Math.Cos(angle)));
+		if (endSpeed >=0)
+			return new Vector3(Convert.ToSingle(endSpeed * Math.Sin(angle)), 0, Convert.ToSingle(endSpeed * Math.Cos(angle)));
+		return Vector3.zero;//if endSpeed == -1
 	}
 	// Send heading to server
 	public void Send() {
@@ -208,7 +217,7 @@ public class Heading {
 		float ds = (float) Math.Abs(expectedSpeed - speed);
 		float da = (float) Math.Abs(expectedAngle - angle);
 		
-		if(dp <  0.01 && ds < 0.01 && da < 0.01)
+		if(dp <  0.05 && ds < 0.05 && da < 0.05)
 			return true;
 		return false;
 	}
