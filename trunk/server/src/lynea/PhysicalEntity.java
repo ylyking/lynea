@@ -321,8 +321,8 @@ public class PhysicalEntity
             + (float) Math.sin(this.angle)* this.acceleration/2 * (float) Math.pow(timeSinceAccelerationInSec, 2);
 
             this.z = initialPosition.z
-            + (float) Math.sin(this.angle)* this.initialSpeed * timeSinceAccelerationInSec
-            + (float) Math.sin(this.angle)* this.acceleration/2 * (float) Math.pow(timeSinceAccelerationInSec, 2);
+            + (float) Math.cos(this.angle)* this.initialSpeed * timeSinceAccelerationInSec
+            + (float) Math.cos(this.angle)* this.acceleration/2 * (float) Math.pow(timeSinceAccelerationInSec, 2);
 
         }
         else
@@ -340,14 +340,10 @@ public class PhysicalEntity
 
      synchronized public float getSpeed()
     {
-        if(getAnimation() != null)
-        {
-            return this.speed;
-        }
-        return 0;
+        return this.speed;
     }
 
-     synchronized protected void setSpeed(float speed)
+     synchronized public void setSpeed(float speed)
     {
           if(speed != this.speed)
           {

@@ -7,7 +7,6 @@ import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import it.gotoandplay.smartfoxserver.extensions.ExtensionHelper;
 import it.gotoandplay.smartfoxserver.lib.ActionscriptObject;
 import java.util.HashMap;
-import lynea.WorldSender;
 import lynea.WorldUpdater;
 import lynea.npc.NPC;
 import lynea.player.Player;

@@ -1,6 +1,7 @@
 package lynea;
 
 
+import lynea.network.WorldSender;
 import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import lynea.npc.NPC;
 

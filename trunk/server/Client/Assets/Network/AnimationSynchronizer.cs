@@ -19,28 +19,32 @@ public class AnimationSynchronizer : MonoBehaviour {
 
 	/*
 	 * this function is called by CharacterGenerator after having loaded the character, which can be done asynchroneouosly (Unity Pro).
-	 * As a result, InitAnimationState MAY have been called before InitAnimation, which would result in Playing an animation other than the default "idle1"
+	 * As a result, ChangeAnimationState MAY have been called before InitAnimation, which would result in Playing an animation other than the default "idle1"
 	 */
 	public void InitAnimation ()
 	{
 		anim = GetComponentInChildren(typeof(Animation)) as Animation;
 		anim.wrapMode = WrapMode.Loop;
 		anim.Play(lastState);
+		Debug.Log("InitAnimation > "+lastState);
 	}
 	/*
-	 * this function is called by PlayAnimation() if InitAnimation() has not yet been called (and thus anim has not yet been initialised)
+	 * this function is called by PlayAnimation() 
 	 *
 	 */
-	private void InitAnimationState(string initState)
+	private void ChangeAnimationState(string newState, float walkSpeed)
 	{
-		lastState = initState;
-		/*//if InitAnimation() has already been called
+		//if InitAnimation() has already been called (and thus anim has already been initialised)
 		if (anim != null)
 		{
-			//stop playing the default animation state played from InitAnimation()
-			anim.Stop();
-			anim.Play(lastState);
-		}*/
+			if (newState == "walk")
+			{
+				anim["walk"].speed = (walkSpeed >0) ? walkSpeed : npcWalkSpeed;
+			}
+			if(newState != lastState)
+				anim.CrossFade(newState);	
+		}
+		lastState = newState;
 	}
 
 	// We call it on local player to start sending animation messages
@@ -77,21 +81,23 @@ public class AnimationSynchronizer : MonoBehaviour {
 		}
 		else if (receiveMode) 
 		{
-			if (anim != null)
-			{
-				//temporary !! write a better way to set remote player speed !!
-				if (message == "walk")
-				{
-					anim["walk"].speed = npcWalkSpeed;
-				}	
-				
-				anim.CrossFade(message);	
-			}
-			else
-				//store the animation message so that it will be able to be played when InitAnimation() will be called
-				InitAnimationState(message);
+			ChangeAnimationState(message, -1);
 		}
-	}	
+	}
+
+	void PlayAnimationFromSpeed(float speed)
+	{
+		//Debug.Log("PlayAnimationFromSpeed > "+newState+" (speed="+walkSpeed+")");
+		if (speed > 0.0f)
+		{
+			ChangeAnimationState("walk", speed);
+		}	
+		else if (speed == 0.0f)
+		{
+			ChangeAnimationState("idle1", -1);
+		}		
+	}
+	
 	
 	public void SendAnimationMessage(string message) {
 		SmartFoxClient client = NetworkController.GetClient();

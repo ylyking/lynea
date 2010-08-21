@@ -48,20 +48,19 @@ public class MovementRequestHandler implements IRequestHandler
             Player.connected.get(uid).setPosition(x, y, z);
             Player.connected.get(uid).setAngle(alpha);
             Player.connected.get(uid).setHeadingUpdateTime(t);
+            Player.connected.get(uid).setSpeed(speed);
             Player.connected.get(uid).setEndSpeed(endSpeed);
             Player.connected.get(uid).setAccelerationTime(accelerationTime);
-
-
-
-
 
             float aa = ((float)Math.round(alpha * 1000))/1000;
             float xx = ((float)Math.round(x * 1000))/1000;
             float yy = ((float)Math.round(y * 1000))/1000;
             float zz = ((float)Math.round(z * 1000))/1000;
             float ss = ((float)Math.round(speed * 1000))/1000;
+            float es = ((float)Math.round(endSpeed * 1000))/1000;
+            float at = ((float)Math.round(accelerationTime * 1000))/1000;
 
-            System.out.println("SAV pos=("+xx+","+yy+","+zz+") alpha=("+aa+") s=("+ss+") t=("+t+")");
+            System.out.println("SAV pos=("+xx+","+yy+","+zz+") ang=("+aa+") s=("+ss+") at=("+at+") es=("+es+") t=("+t+")");
     }
 
 }
