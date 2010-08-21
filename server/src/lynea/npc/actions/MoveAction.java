@@ -5,7 +5,7 @@
 
 package lynea.npc.actions;
 
-import lynea.WorldSender;
+import lynea.network.WorldSender;
 import lynea.npc.interrupts.AttackInterrupt;
 import lynea.npc.interrupts.AttackListener;
 import lynea.npc.NPC;
@@ -54,9 +54,10 @@ public class MoveAction extends ActionElement implements AttackListener
                 //calculate the real stop time (<= NPC.maxStopTime) needed to arrive at the destination with zero speed
                 long realStopTime = Math.round(current.distance(end)*2/speed * 1000);
                 npc.stop(realStopTime);
-                WorldSender sender = WorldSender.getInstance();
-                if (sender!= null)
-                    sender.sendHeadingOfSender(npc);
+                //bad : not scalable
+                //WorldSender sender = WorldSender.getInstance();
+                //if (sender!= null)
+                //    sender.sendHeadingOfSender(npc);
             }
             stopping = true;
         }

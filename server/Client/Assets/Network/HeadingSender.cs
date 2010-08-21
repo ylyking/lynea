@@ -25,48 +25,51 @@ public class HeadingSender : MonoBehaviour {
 		sendMode = false;
 	}
 	
-	void Update() { 
-		if (sendMode) {
-			TryToSendHeading();
-		}
-	}
-	
-	
-	void TryToSendHeading() 
-	{
-		timeSinceLastSending += Time.deltaTime;
-
-		if (timeSinceLastSending >= sendingPeriod) 
+	void Update() 
+	{ 
+		if (sendMode) 
 		{
-			Heading current = new Heading();
-			
-			Vector3 currPos = transform.position;
-			float currAngle = Convert.ToSingle(2*Math.Atan2(transform.rotation.y, transform.rotation.w));
-			ThirdPersonController playerController = GetComponent<ThirdPersonController>();
-			float currSpeed = playerController.GetSpeed();
-			long currTime = ServerClock.GetTime();
-			
-			if (playerController.IsAccelerating())
+			//Try to send heading
+			timeSinceLastSending += Time.deltaTime;
+			if (timeSinceLastSending >= sendingPeriod) 
 			{
-				float currEndSpeed = playerController.GetEndSpeed();
-				long currAccelerationTime = playerController.GetAccelerationTime();
-				current.InitFromValues(currPos, currAngle, currTime, currSpeed, currEndSpeed, currAccelerationTime);
+				SendHeading();
+				timeSinceLastSending = 0;
 			}
-			else
-			{
-				current.InitFromValues(currPos, currAngle, currTime, currSpeed);
-			}
-			
-			
-			bool headingChanged = !current.IsFutureOf(lastState);
-			//Debug.Log("send?"+headingChanged+", time="+currTime); 
-			
-			if(headingChanged)
-			{
-				lastState = current;
-				lastState.Send();
-			}
-			timeSinceLastSending = 0;
 		}
 	}
+	
+	
+	void SendHeading() 
+	{
+		Heading current = new Heading();
+		
+		Vector3 currPos = transform.position;
+		float currAngle = Convert.ToSingle(2*Math.Atan2(transform.rotation.y, transform.rotation.w));
+		ThirdPersonController playerController = GetComponent<ThirdPersonController>();
+		float currSpeed = playerController.GetSpeed();
+		long currTime = ServerClock.GetTime();
+		
+		if (playerController.IsAccelerating())
+		{
+			float currEndSpeed = playerController.GetEndSpeed();
+			long currAccelerationTime = playerController.GetAccelerationTime();
+			current.InitFromValues(currPos, currAngle, currTime, currSpeed, currEndSpeed, currAccelerationTime);
+		}
+		else
+		{
+			current.InitFromValues(currPos, currAngle, currTime, currSpeed);
+		}
+		
+		bool headingChanged = !current.IsFutureOf(lastState);
+		//Debug.Log("send?"+headingChanged+", time="+currTime); 
+		
+		if(headingChanged)
+		{
+			lastState = current;
+			lastState.Send();
+		}
+	}
+	
+	
 }

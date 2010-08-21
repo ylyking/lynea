@@ -10,7 +10,6 @@ import it.gotoandplay.smartfoxserver.events.InternalEventObject;
 import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import it.gotoandplay.smartfoxserver.lib.ActionscriptObject;
 import java.util.LinkedList;
-import lynea.WorldSender;
 import lynea.player.Player;
 
 /**

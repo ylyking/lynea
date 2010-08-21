@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package lynea;
+package lynea.network;
 
 import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import it.gotoandplay.smartfoxserver.lib.ActionscriptObject;

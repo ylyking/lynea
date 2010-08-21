@@ -10,6 +10,8 @@ var speedSmoothing = 10.0;
 var rotateSpeed = 500.0;
 var trotAfterSeconds = 3.0;
 
+var stopTime:long = 300; //stop time in milliseconds
+
 // The camera doesnt start following the target immediately but waits for a split second to avoid too much waving around.
 private var lockCameraTimer = 0.0;
 
@@ -37,6 +39,11 @@ private var isControllable = true;
 
 private var up = Vector3.forward;
 private var followCameraComponent;
+
+private var endSpeed:float = -1;
+private var accelerationTime:long = -1;
+private var isAccelerating:boolean = false;
+private var acceleration:float = 0;
 
 function Awake ()
 {
@@ -72,7 +79,8 @@ function UpdateSmoothedMovementDirection ()
 	
 	var wasMoving = isMoving;
 	isMoving = Mathf.Abs (h) > 0.1 || Mathf.Abs (v) > 0.1;
-		
+	
+
 	// Target direction relative to the camera
 	var targetDirection = h * right + v * forward;
 	
@@ -119,11 +127,40 @@ function UpdateSmoothedMovementDirection ()
 		targetSpeed *= walkSpeed;
 	}
 	
-	//OLD: Smooth the speed based on the current target direction
-	//var curSmooth = speedSmoothing * Time.deltaTime;
-	//moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
-	//NEW:
-	moveSpeed = targetSpeed;
+	if(!isMoving)
+	{
+		if(wasMoving)
+		{
+			accelerationTime = stopTime;
+			endSpeed = 0;
+			acceleration = (endSpeed - moveSpeed) / (accelerationTime/1000.0);
+			isAccelerating = true;
+			//immediately send heading to server
+			SendMessage("SendHeading");
+		}
+		
+		if(isAccelerating && moveSpeed > 0)
+		{
+			moveSpeed += acceleration * Time.deltaTime;
+			accelerationTime -= Mathf.Round(Time.deltaTime*1000);
+		}
+		else if (isAccelerating)
+		{
+			acceleration = 0;
+			moveSpeed = 0;
+			isAccelerating = false;
+			endSpeed = -1;
+			accelerationTime = -1;
+		}
+	}
+	else
+	{
+		//OLD: Smooth the speed based on the current target direction
+		//var curSmooth = speedSmoothing * Time.deltaTime;
+		//moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
+		//NEW:
+		moveSpeed = targetSpeed;
+	}
 	
 	// Reset walk time start when we slow down
 	if (moveSpeed < walkSpeed * 0.3)
@@ -161,6 +198,19 @@ function Update() {
 function GetSpeed () {
 	return moveSpeed;
 }
+
+function GetEndSpeed () {
+	return endSpeed;
+}
+
+function GetAccelerationTime() {
+	return accelerationTime;
+}
+
+function IsAccelerating() {
+	return isAccelerating;
+}
+
 
 
 function GetDirection () {

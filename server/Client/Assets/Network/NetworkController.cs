@@ -86,7 +86,8 @@ public class NetworkController : MonoBehaviour {
 					SendHeadingsToGameObjects(data);
 					break;
 				case "a": // "a" - for animation message received
-					SendAnimationMessagesToGameObjects(data);
+					Debug.Log("anim received but anim reception is DISABLED");
+					//SendAnimationMessagesToGameObjects(data);
 					break;
 				case "c"://"c" - for clock sync messages
 					ServerClock.OnExtensionResponse(data);

@@ -355,11 +355,13 @@ public class ServerClock
 	public static void SendServerClockReady()
 	{
 		Debug.Log("Sending ClockReady !!");
+		/*
 		foreach(TimeDelta td in deltas)
 		{
 			Debug.Log("latency="+td.GetLatency()+ " timeSyncDelta="+td.GetTimeSyncDelta());
 		}
 		Debug.Log("this.syncTimeDelta=" + syncTimeDelta);
+		*/
 		SmartFoxClient client = NetworkController.GetClient();
 		string extensionName = NetworkController.GetExtensionName();
 	

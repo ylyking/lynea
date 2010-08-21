@@ -13,6 +13,7 @@ public class HeadingReceiver : MonoBehaviour {
 	private bool receiveMode = false;
 	private bool hasReceivedHeading = false;
 	private bool isIntercepting;
+	private bool softAngleVariation;
 	
 	private Heading course;
 	private Heading interceptor;
@@ -43,10 +44,10 @@ public class HeadingReceiver : MonoBehaviour {
 			//figure out where it should render
 			if(isIntercepting)
 			{
-				Debug.Log("isIntercepting");
+				//Debug.Log("isIntercepting");
 				if (ServerClock.GetTime() > interceptTime) 
 				{
-					Debug.Log("finish Intercepting");
+					//Debug.Log("finish Intercepting");
 					isIntercepting = false;
 				}
 				//Debug.Log("->UpdateView(interceptor)");
@@ -57,13 +58,15 @@ public class HeadingReceiver : MonoBehaviour {
 			}
 			if(!isIntercepting)
 			{
-				Debug.Log("is not intercepting");
+				//Debug.Log("is not intercepting");
 				UpdateCourse();
 				//Debug.Log("->UpdateView(course)");
 				UpdateView(course);
 			}
 			transform.position = view.GetPosition();
 			transform.rotation = view.GetRotation();
+			//Debug.Log("VIEW : x="+transform.position.x +" z="+transform.position.z + " sx="+view.GetSpeed().x+ " sz="+view.GetSpeed().z + " courseIsAcc?" +course.IsAccelerating());
+			SendMessage("PlayAnimationFromSpeed", /*(course.IsAccelerating())?0:£*/(view.GetSpeed().magnitude));
 		}
 	}
 	
@@ -88,27 +91,32 @@ public class HeadingReceiver : MonoBehaviour {
 		//float angMov = (float) angDiff * k;
 		//float angle = view.GetAngle() + angMov;
 		float angle = heading.GetAngle();
+		if(heading == interceptor && softAngleVariation)
+			angle = view.GetAngle();
 		
 		float speed = heading.GetSpeed().magnitude;
 		if (heading.IsAccelerating()) {
-			speed += heading.GetAcceleration().magnitude * elapsed;
+			int sign  = (Vector3.Dot(heading.GetAcceleration(), heading.GetSpeed())) > 0 ? 1 : -1;
+			speed += sign*heading.GetAcceleration().magnitude * elapsed;
 		}
 		
 		//Debug.Log("UV: view pos: ["+"("+view.GetPosition().x+","+view.GetPosition().z+")->"+"("+x+","+z+")"+ "]" + " --- "+heading);
 		//Debug.Log("UV: view speed: ["+view.GetSpeed().magnitude+"->"+speed + "]" + " --- "+heading);
 		//Debug.Log("UV: view angle: ["+view.GetAngle()+"->"+angle + "]" + " --- "+heading);
+		
+		//Debug.Log("UpdateView: elapsed [sec]="+elapsed+", view_x="+x);
 		//copy properties to the view heading
-		Debug.Log("UpdateView: elapsed [sec]="+elapsed+", view_x="+x);
 		view.InitFromValues(new Vector3(x, 0, z), angle, ServerClock.GetTime(), speed);
 	}
 	
 	private void UpdateCourse() 
 	{
-		Debug.Log("UpdateCourse()");
+		//Debug.Log("UpdateCourse()");
+		
 		//if the course is accelerating and it should be done accelerating
 		if (course.IsAccelerating() && ServerClock.GetTime() >= course.GetTime() + course.GetAccelerationTime()) 
 		{
-			Debug.Log("the course is accelerating and it should be done accelerating");
+			//Debug.Log("the course is accelerating and it should be done accelerating");
 			//update the course to a position of where it would be at the moment acceleration is done
 			float x = course.GetPosition().x + course.GetSpeed().x * (float)course.GetAccelerationTime()/1000.0f + 0.5f * course.GetAcceleration().x * Convert.ToSingle(Math.Pow((float)course.GetAccelerationTime()/1000.0f, 2));
 			float z = course.GetPosition().z + course.GetSpeed().z * (float)course.GetAccelerationTime()/1000.0f + 0.5f * course.GetAcceleration().z * Convert.ToSingle(Math.Pow((float)course.GetAccelerationTime()/1000.0f, 2));
@@ -124,7 +132,7 @@ public class HeadingReceiver : MonoBehaviour {
 			course.SetSpeed(newSpeed, -1, -1);
 			if (newSpeed == 0)
 				SendMessage("PlayAnimation", "idle1");
-			Debug.Log("UpdateCourse:  course_x="+x+", course_sx="+course.GetEndSpeed().magnitude);
+			//Debug.Log("UpdateCourse:  course_x="+x+", course_sx="+course.GetEndSpeed().magnitude);
 		}
 	}
 	
@@ -215,22 +223,33 @@ public class HeadingReceiver : MonoBehaviour {
 		
 		//distance between the current interceptor position and where the intersection will take place
 		float dis = Convert.ToSingle(Math.Sqrt(Math.Pow(targetx - interceptor.GetPosition().x, 2) + Math.Pow(targetz - interceptor.GetPosition().z, 2)));
+		//Debug.Log("dis = "+dis+" sqrt[(tx-interceptor.x)² + (tz-interceptor.z)²]= sqrt[("+targetx+"-"+interceptor.GetPosition().x+")² + ("+targetz+"-"+interceptor.GetPosition().z+")²]");
+
+
+		//speed that must occur to achieve this
+		float speed = dis / ((float)scheduled/1000.0f);
 		
+		//angle of the interceptor
+		float angle = Convert.ToSingle(Math.PI/2 - Math.Atan2(targetz - interceptor.GetPosition().z, targetx - interceptor.GetPosition().x));
+		
+		float angleVariation1 = AngleDistance(view.GetAngle(), angle);
+		float angleVariation2 = AngleDistance(angle, course.GetAngle());
+		softAngleVariation = false;
 		if(dis <0.01 || scheduled <=0)
 		{
 			Debug.Log("NO INTERCEPT : dis=" +dis +" scheduled="+scheduled);
 			isIntercepting = false;
 			return;
 		}
+		else if(dis<0.3 && angleVariation1>Math.PI/8 && angleVariation2>Math.PI/8)
+		{
+			softAngleVariation = true;
+			Debug.Log("SOFT INTERCEPT : dis=" +dis +" scheduled="+scheduled+" angleVariation1="+angleVariation1+" angleVariation2="+angleVariation2);
+		}
 		else
 		{
 			Debug.Log("INTERCEP: dis=" +dis +" scheduled="+scheduled + " speed="+(dis / ((float)scheduled/1000.0f)));
 		}
-		//speed that must occur to achieve this
-		float speed = dis / ((float)scheduled/1000.0f);
-		
-		//angle of the interseptor
-		float angle = Convert.ToSingle(Math.PI/2 - Math.Atan2(targetz - interceptor.GetPosition().z, targetx - interceptor.GetPosition().x));
 		
 		//update properties on the interceptor
 		interceptor.SetSpeed(speed, -1, -1);
@@ -238,6 +257,13 @@ public class HeadingReceiver : MonoBehaviour {
 		
 		interceptTime = when;
 	}
+	
+	private float AngleDistance (float a, float b)
+	{
+		a = Mathf.Repeat(a, (float)(2*Math.PI));
+		b = Mathf.Repeat(b, (float)(2*Math.PI));
 		
+		return Mathf.Abs(b - a);
+	}
 	
 }

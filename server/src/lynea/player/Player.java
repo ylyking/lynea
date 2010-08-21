@@ -133,12 +133,28 @@ public class Player extends PhysicalEntity implements AssetOwner
     @Override
     synchronized public void setAnimation(String animation)
     {
-        super.setAnimation(animation);
-        if (animation.equals("idle1"))
-            setSpeed(0);
-        else if(animation.equals("walk"))
-            setSpeed(Player.walkSpeed);
+        if(!animation.equals(getAnimation()))
+        {
+            super.setAnimation(animation);
+            if (animation.equals("idle1"))
+                super.setSpeed(0.0f);
+            else if(animation.equals("walk"))
+                super.setSpeed(Player.walkSpeed);
+        }
     }
+    @Override
+    synchronized public void setSpeed(float speed)
+    {
+        if(speed != getSpeed())
+        {
+            super.setSpeed(speed);
+            if(speed == 0.0f)
+                super.setAnimation("idle1");
+            else if (speed > 0.0f && speed < NPC.walkSpeed)
+                super.setAnimation("walk");
+        }
+    }
+
 
     public void setCanReceive(boolean b) {
         canReceiveHeadings = b;

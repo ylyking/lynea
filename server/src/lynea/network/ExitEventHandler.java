@@ -7,7 +7,6 @@ package lynea.network;
 
 import it.gotoandplay.smartfoxserver.events.InternalEventObject;
 import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
-import lynea.WorldSender;
 import lynea.player.Player;
 
 /**
