@@ -5,7 +5,6 @@
 
 package lynea.npc.actions;
 
-import lynea.network.WorldSender;
 import lynea.npc.interrupts.AttackInterrupt;
 import lynea.npc.interrupts.AttackListener;
 import lynea.npc.NPC;
@@ -88,7 +87,7 @@ public class MoveAction extends ActionElement implements AttackListener
     protected void end()
     {
         System.out.println(getName()+".end()");
-        npc.setAnimation("idle1");
+        //fix the position which could not be 100% correct as we use non infinitesimal time steps (worldUpdatePeriod)
         npc.setPosition(this.end);
         super.end();
     }
@@ -121,10 +120,9 @@ public class MoveAction extends ActionElement implements AttackListener
         {
             begin = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
             current = (ActionMark) begin.clone();
-            npc.setAnimation("walk");
-            stopping = false;
-            speed = npc.getSpeed();
             setNPCInitialHeading();
+            stopping = false;
+            speed = npc.getSpeed();         
             hasBeenAttacked = false;
         }
     }
@@ -135,6 +133,8 @@ public class MoveAction extends ActionElement implements AttackListener
         //alpha is the angle between the current facing direction and the global z axis
         float alpha = (float) (Math.PI/2 - Math.atan2(end.getZ()-begin.getZ(), end.getX()-begin.getX()));
         npc.setAngle(alpha);
+        npc.setSpeed(NPC.walkSpeed);//this automatically sets the "walk" anim so no need to for this line:
+        //npc.setAnimation("walk");
         npc.setHeadingUpdateTime();
     }
 }

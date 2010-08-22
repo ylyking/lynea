@@ -45,7 +45,7 @@ public class HeadingReceiver : MonoBehaviour {
 			if(isIntercepting)
 			{
 				//Debug.Log("isIntercepting");
-				if (ServerClock.GetTime() > interceptTime) 
+				if (ServerClock.Instance.GetTime() > interceptTime) 
 				{
 					//Debug.Log("finish Intercepting");
 					isIntercepting = false;
@@ -75,7 +75,7 @@ public class HeadingReceiver : MonoBehaviour {
 	//transform.rotation = Quaternion.Slerp(interpolateFrom.rotation, interpolateTo.rotation, t);
 	{
 		//amount of time since starting this heading
-		float elapsed = (float)(ServerClock.GetTime() - heading.GetTime())/1000.0f;
+		float elapsed = (float)(ServerClock.Instance.GetTime() - heading.GetTime())/1000.0f;
 		if (elapsed <0)
 			return;
 		//x, z position
@@ -106,7 +106,7 @@ public class HeadingReceiver : MonoBehaviour {
 		
 		//Debug.Log("UpdateView: elapsed [sec]="+elapsed+", view_x="+x);
 		//copy properties to the view heading
-		view.InitFromValues(new Vector3(x, 0, z), angle, ServerClock.GetTime(), speed);
+		view.InitFromValues(new Vector3(x, 0, z), angle, ServerClock.Instance.GetTime(), speed);
 	}
 	
 	private void UpdateCourse() 
@@ -114,7 +114,7 @@ public class HeadingReceiver : MonoBehaviour {
 		//Debug.Log("UpdateCourse()");
 		
 		//if the course is accelerating and it should be done accelerating
-		if (course.IsAccelerating() && ServerClock.GetTime() >= course.GetTime() + course.GetAccelerationTime()) 
+		if (course.IsAccelerating() && ServerClock.Instance.GetTime() >= course.GetTime() + course.GetAccelerationTime()) 
 		{
 			//Debug.Log("the course is accelerating and it should be done accelerating");
 			//update the course to a position of where it would be at the moment acceleration is done
@@ -176,7 +176,7 @@ public class HeadingReceiver : MonoBehaviour {
 	private void CreateInterceptor()
 	{
 		//how long ago was this new vector born?
-		long age = ServerClock.GetTime() - course.GetTime();
+		long age = ServerClock.Instance.GetTime() - course.GetTime();
 		age = (age >=0) ? age : 0;
 		Debug.Log("interc: age="+age);
 		if(age == 0)
@@ -186,15 +186,16 @@ public class HeadingReceiver : MonoBehaviour {
 	
 		//update the interceptor to start on a new course
 		interceptor.SetPosition(view);
-		interceptor.SetTime(ServerClock.GetTime());
+		interceptor.SetTime(ServerClock.Instance.GetTime());
 		
 		//how long from now to give the interceptor time to converge on the course
 		long scheduled = (long) ((float)age * interceptTimeMultiplier);
 	
 		scheduled = Math.Min(scheduled, maxDurationInterceptTime);
 		
+
 		//in absolute time, this is when the convergence is complete
-		long when = ServerClock.GetTime() + scheduled;
+		long when = ServerClock.Instance.GetTime() + scheduled;
 		
 		//the x/z position where the two paths intersect
 		float targetx= course.GetPosition().x + course.GetSpeed().x * (float)(when - course.GetTime())/1000.0f;
@@ -212,20 +213,19 @@ public class HeadingReceiver : MonoBehaviour {
 			targetz = tz;
 			
 			//how long from now until acceleration is done
-			long timeDelta = course.GetTime() +course.GetAccelerationTime() - ServerClock.GetTime();
+			long timeDelta = course.GetTime() +course.GetAccelerationTime() - ServerClock.Instance.GetTime();
 
 			//update the relative time variable saying how long from to to have the intersection complete
 			scheduled = timeDelta;
 			Debug.Log("Scheduled in "+timeDelta+" ms");
 			//in absolute time, when will the intersection be complete
-			when = ServerClock.GetTime() + scheduled;
+			when = ServerClock.Instance.GetTime() + scheduled;
 		}
 		
 		//distance between the current interceptor position and where the intersection will take place
 		float dis = Convert.ToSingle(Math.Sqrt(Math.Pow(targetx - interceptor.GetPosition().x, 2) + Math.Pow(targetz - interceptor.GetPosition().z, 2)));
 		//Debug.Log("dis = "+dis+" sqrt[(tx-interceptor.x)² + (tz-interceptor.z)²]= sqrt[("+targetx+"-"+interceptor.GetPosition().x+")² + ("+targetz+"-"+interceptor.GetPosition().z+")²]");
-
-
+		
 		//speed that must occur to achieve this
 		float speed = dis / ((float)scheduled/1000.0f);
 		
@@ -241,7 +241,7 @@ public class HeadingReceiver : MonoBehaviour {
 			isIntercepting = false;
 			return;
 		}
-		else if(dis<0.3 && angleVariation1>Math.PI/8 && angleVariation2>Math.PI/8)
+		else if(dis<0.4 && angleVariation1>Math.PI/8 && angleVariation2>Math.PI/8)
 		{
 			softAngleVariation = true;
 			Debug.Log("SOFT INTERCEPT : dis=" +dis +" scheduled="+scheduled+" angleVariation1="+angleVariation1+" angleVariation2="+angleVariation2);
@@ -258,12 +258,12 @@ public class HeadingReceiver : MonoBehaviour {
 		interceptTime = when;
 	}
 	
-	private float AngleDistance (float a, float b)
-	{
-		a = Mathf.Repeat(a, (float)(2*Math.PI));
-		b = Mathf.Repeat(b, (float)(2*Math.PI));
+		private float AngleDistance (float a, float b)
+		{
+			a = Mathf.Repeat(a, (float)(2*Math.PI));
+			b = Mathf.Repeat(b, (float)(2*Math.PI));
+			
+			return Mathf.Abs(b - a);
+		}
 		
-		return Mathf.Abs(b - a);
-	}
-	
 }

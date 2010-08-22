@@ -4,6 +4,7 @@ package lynea;
 import lynea.network.WorldSender;
 import it.gotoandplay.smartfoxserver.extensions.AbstractExtension;
 import lynea.npc.NPC;
+import lynea.player.Player;
 
 
 /*
@@ -77,6 +78,7 @@ public class WorldUpdater implements Runnable
             {
                 simulationTime += worldUpdatePeriod;
                 NPC.updateAll(worldUpdatePeriod);
+                Player.updateAllHeadings(worldUpdatePeriod);
             }
             long timeAfterUpdate = Clock.getTime();
             if (timeAfterUpdate - timeBeforeUpdate <= (long) sendWorldStatePeriod)

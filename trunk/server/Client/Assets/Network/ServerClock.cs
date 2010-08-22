@@ -8,50 +8,105 @@ using SmartFoxClientAPI;
 using SmartFoxClientAPI.Data;
 
 
-public class ServerClock
+
+
+
+public sealed class ServerClock
 {
 
-	static private bool clockReady = false;
+	static ServerClock instance=null;
+    static readonly object padlock = new object();
+
+    ServerClock()
+    {
+    }
+
+    public static ServerClock Instance
+    {
+        get
+        {
+            lock (padlock)
+            {
+                if (instance==null)
+                {
+                    instance = new ServerClock();
+                }
+                return instance;
+            }
+        }
+    }
+	
+	private bool clockReady = false;
 	
 	//each latency data point
-	static private ArrayList deltas;
+	private ArrayList deltas;
 	
 	//max number of deltas to keep track of
-	static private int maxDeltas =20;
+	private int maxDeltas =20;
 	
 	//the best computed offset to getTimer based on the information we have
-	static private long syncTimeDelta; 
+	private long syncTimeDelta; 
 	
 	//true if there is a request out
-	static private bool responsePending;
+	private bool responsePending;
 	
 	//time we sent the request
-	static private long timeRequestSent;
+	private long timeRequestSent;
 	
 	//determined latency value
-	static private int latency;
+	private int latency;
 	
 	//of the data set used, this is the biggest variation from the latency and the furthest value
-	static private int latencyError;
+	private int latencyError;
 	
 	//how long to wait between pings
-	static private int backgroundWaitTime;
+	private int backgroundWaitTime;
 	
 	//timer used to make pings happen
-	static private Timer backgroundTimer;
+	private Timer backgroundTimer;
 	
 	//true if we are in the initial flurry of pings
-	static private bool bursting;
+	private bool bursting;
 	
-	static private bool lockedInServerTime;
+	private bool lockedInServerTime;
 
+	public event EventHandler OnClockReady;
+
+	protected void ClockReady(EventArgs e) 
+	{
+		bursting = false;
+		SendServerClockReady();
+		clockReady = true;
+		if (OnClockReady != null)
+			OnClockReady(this, e);
+	}
 	
+	private void SendServerClockReady()
+	{
+		//Debug.Log("Sending ClockReady !!");
+		/*
+		foreach(TimeDelta td in deltas)
+		{
+			Debug.Log("latency="+td.GetLatency()+ " timeSyncDelta="+td.GetTimeSyncDelta());
+		}*/
+		//Debug.Log("latency = "+latency+", syncTimeDelta = " + syncTimeDelta);
+		
+		SmartFoxClient client = NetworkController.GetClient();
+		string extensionName = NetworkController.GetExtensionName();
+	
+		Hashtable data = new Hashtable();
+		//add the "clock is ready" message => this is not a "get server time" request
+		data.Add("r", true);
+		//send the request. 
+		client.SendXtMessage(extensionName, "c", data);					
+	}
+
 	/**
 	 * Starts the process of determining the server clock time
 	 * @param	How long to wait in between pings. If -1, then no pings are sent after the time is determined
 	 * @param	If true, the pings are sent as fast as possible until the initial latency is found, then it slows
 	 */
-	 public static void Init(int pingDelay, bool burst)
+	 public void Init(int pingDelay, bool burst)
 	{
 		if (pingDelay > 0) 
 		{
@@ -74,16 +129,17 @@ public class ServerClock
 	/**
 	 * Stop gathering data
 	 */
-	 public static void Stop()
+	 public void Stop()
 	{
 		if (backgroundTimer != null) 
 		{
 			backgroundTimer.Stop();
+			backgroundTimer.Elapsed -= new ElapsedEventHandler(OnTimer);
 			backgroundTimer = null;
 		}
 	}
 	
-	 private static void OnTimer(object source, ElapsedEventArgs e)
+	 private void OnTimer(object source, ElapsedEventArgs e)
 	{
 		if (!responsePending && !bursting) 
 		{
@@ -93,7 +149,7 @@ public class ServerClock
 	
 	//private static int numSend = 0;
 	//private static int numReceive = 0;
-	 private static void RequestServerTime()
+	 private void RequestServerTime()
 	{
 		if (!responsePending) 
 		{
@@ -113,7 +169,7 @@ public class ServerClock
 		}
 	}
 	
-	 public static void OnExtensionResponse(SFSObject data)
+	 public void OnExtensionResponse(SFSObject data)
 	{
 		//Debug.Log("received request n°"+(++numReceive));
 		
@@ -126,12 +182,11 @@ public class ServerClock
 		{
 			if (deltas.Count == maxDeltas) 
 			{
-				bursting = false;
-				clockReady = true;
-				SendServerClockReady();
+				ClockReady(EventArgs.Empty);
 			}
 			RequestServerTime();
 		}
+		//Debug.Log("latency = "+latency+", syncTimeDelta = " + syncTimeDelta);
 	}
 	
 	
@@ -139,7 +194,7 @@ public class ServerClock
 	 * Gets the current server time as best approximated by the algorithm used.
 	 * @return The server time (in milliseconds).
 	 */
-	public  static  long GetTime()
+	public long GetTime()
 	{
 		if(!IsClockReady())
 		{
@@ -163,7 +218,7 @@ public class ServerClock
 	 * @param	Time the client received the response (in ms)
 	 * @param	Time the server sent the response (in ms)
 	 */
-	private static void AddTimeDelta(long clientSendTime, long clientReceiveTime, long serverTime)
+	private void AddTimeDelta(long clientSendTime, long clientReceiveTime, long serverTime)
 	{
 		//Debug.Log("AddTimeDelta()");
 		//guess the latency
@@ -184,7 +239,7 @@ public class ServerClock
 	/**
 	 * Recalculates the best timeSyncDelta based on the most recent information
 	 */
-	private static void Recalculate()
+	private void Recalculate()
 	{
 		//Debug.Log("Recalculate()");
 		//grab a copy of the deltas array
@@ -214,7 +269,7 @@ public class ServerClock
 	 * @param	Array of Time_deltas to be used
 	 * @return Average timeSyncDelta
 	 */
-	private static long DetermineAverage(Array arr)
+	private long DetermineAverage(Array arr)
 	{
 		double total = 0;
 		for (int i= 0; i < arr.Length;++i) 
@@ -225,7 +280,7 @@ public class ServerClock
 		return (long) Math.Round(total / arr.Length);
 	}
 	
-	private static int DetermineAverageLatency(Array arr)
+	private int DetermineAverageLatency(Array arr)
 	{
 		float total = 0;
 		for (int i= 0; i < arr.Length;++i) 
@@ -247,7 +302,7 @@ public class ServerClock
 	 * @param	Median value
 	 * @param	Threshold multiplier of median value
 	 */
-	private static void PruneOutliers(Array arr, int median, float threshold)
+	private void PruneOutliers(Array arr, int median, float threshold)
 	{
 		int maxValue = (int) (median * threshold);
 		for (int i = arr.Length - 1; i >= 0;--i ) 
@@ -276,7 +331,7 @@ public class ServerClock
 	 * @param	Array of Time_deltas to use.
 	 * @return Median value.
 	 */
-	private static int DetermineMedian(Array arr) 
+	private int DetermineMedian(Array arr) 
 	{
 		int ind;
 		if (arr.Length % 2 == 0) 
@@ -293,17 +348,17 @@ public class ServerClock
 	
 
 	
-	public static int GetLatency() { return latency; }
+	public int GetLatency() { return latency; }
 	
-	public static int GetLatencyError() { return latencyError; }
+	public int GetLatencyError() { return latencyError; }
 	
-	public static int GetMaxDeltas() { return maxDeltas; }
+	public int GetMaxDeltas() { return maxDeltas; }
 	
-	public static void SetMaxDeltas(int value){
+	public void SetMaxDeltas(int value){
 		maxDeltas = value;
 	}
 	
-	public static bool IsClockReady() { return clockReady;}
+	public bool IsClockReady() { return clockReady;}
 	
 	
 	public class TimeDeltaComparer : IComparer
@@ -352,24 +407,6 @@ public class ServerClock
 		public long GetTimeSyncDelta(){ return this.timeSyncDelta; }
 	}
 	
-	public static void SendServerClockReady()
-	{
-		Debug.Log("Sending ClockReady !!");
-		/*
-		foreach(TimeDelta td in deltas)
-		{
-			Debug.Log("latency="+td.GetLatency()+ " timeSyncDelta="+td.GetTimeSyncDelta());
-		}
-		Debug.Log("this.syncTimeDelta=" + syncTimeDelta);
-		*/
-		SmartFoxClient client = NetworkController.GetClient();
-		string extensionName = NetworkController.GetExtensionName();
-	
-		Hashtable data = new Hashtable();
-		//add the "clock is ready" message => this is not a "get server time" request
-		data.Add("r", true);
-		//send the request. 
-		client.SendXtMessage(extensionName, "c", data);					
-	}
+
 	
 }
