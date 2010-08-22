@@ -10,7 +10,7 @@ var speedSmoothing = 10.0;
 var rotateSpeed = 500.0;
 var trotAfterSeconds = 3.0;
 
-var stopTime:long = 300; //stop time in milliseconds
+var stopTime:long = 500; //stop time in milliseconds
 
 // The camera doesnt start following the target immediately but waits for a split second to avoid too much waving around.
 private var lockCameraTimer = 0.0;
@@ -43,7 +43,7 @@ private var followCameraComponent;
 private var endSpeed:float = -1;
 private var accelerationTime:long = -1;
 private var isAccelerating:boolean = false;
-private var acceleration:float = 0;
+private var acceleration:float = 0;//acceleration along the local z axis (can be > 0, < 0 or = 0 )
 
 function Awake ()
 {
@@ -139,7 +139,7 @@ function UpdateSmoothedMovementDirection ()
 			SendMessage("SendHeading");
 		}
 		
-		if(isAccelerating && moveSpeed > 0)
+		if(isAccelerating && ((acceleration < 0) ? moveSpeed > endSpeed : moveSpeed < endSpeed))
 		{
 			moveSpeed += acceleration * Time.deltaTime;
 			accelerationTime -= Mathf.Round(Time.deltaTime*1000);
@@ -147,7 +147,7 @@ function UpdateSmoothedMovementDirection ()
 		else if (isAccelerating)
 		{
 			acceleration = 0;
-			moveSpeed = 0;
+			moveSpeed = endSpeed;
 			isAccelerating = false;
 			endSpeed = -1;
 			accelerationTime = -1;
@@ -155,6 +155,10 @@ function UpdateSmoothedMovementDirection ()
 	}
 	else
 	{
+		acceleration = 0;
+		isAccelerating = false;
+		endSpeed = -1;
+		accelerationTime = -1;
 		//OLD: Smooth the speed based on the current target direction
 		//var curSmooth = speedSmoothing * Time.deltaTime;
 		//moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);

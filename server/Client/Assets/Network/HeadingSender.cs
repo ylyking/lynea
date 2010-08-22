@@ -48,7 +48,7 @@ public class HeadingSender : MonoBehaviour {
 		float currAngle = Convert.ToSingle(2*Math.Atan2(transform.rotation.y, transform.rotation.w));
 		ThirdPersonController playerController = GetComponent<ThirdPersonController>();
 		float currSpeed = playerController.GetSpeed();
-		long currTime = ServerClock.GetTime();
+		long currTime = ServerClock.Instance.GetTime();
 		
 		if (playerController.IsAccelerating())
 		{
@@ -61,11 +61,13 @@ public class HeadingSender : MonoBehaviour {
 			current.InitFromValues(currPos, currAngle, currTime, currSpeed);
 		}
 		
+	
 		bool headingChanged = !current.IsFutureOf(lastState);
-		//Debug.Log("send?"+headingChanged+", time="+currTime); 
 		
 		if(headingChanged)
 		{
+			Debug.Log("last: "+lastState);
+			Debug.Log("curr: "+current);
 			lastState = current;
 			lastState.Send();
 		}

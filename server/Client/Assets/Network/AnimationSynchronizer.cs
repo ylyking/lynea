@@ -26,7 +26,7 @@ public class AnimationSynchronizer : MonoBehaviour {
 		anim = GetComponentInChildren(typeof(Animation)) as Animation;
 		anim.wrapMode = WrapMode.Loop;
 		anim.Play(lastState);
-		Debug.Log("InitAnimation > "+lastState);
+		//Debug.Log("InitAnimation > "+lastState);
 	}
 	/*
 	 * this function is called by PlayAnimation() 
@@ -99,13 +99,19 @@ public class AnimationSynchronizer : MonoBehaviour {
 	}
 	
 	
-	public void SendAnimationMessage(string message) {
-		SmartFoxClient client = NetworkController.GetClient();
-		string extensionName = NetworkController.GetExtensionName();
-		Hashtable data = new Hashtable();
-		data.Add("mes", message);
-		//Send animation message
-		client.SendXtMessage(extensionName, "a", data);
+	public void SendAnimationMessage(string message) 
+	{
+		//by using the player speed, the server is able to determine if the current animation is "idle1" or "walk".
+		//So, we don't need to send these messages
+		if(message != "idle1" && message!= "walk")
+		{
+			SmartFoxClient client = NetworkController.GetClient();
+			string extensionName = NetworkController.GetExtensionName();
+			Hashtable data = new Hashtable();
+			data.Add("mes", message);
+			//Send animation message
+			client.SendXtMessage(extensionName, "a", data);
+		}
 	}
 	
 	/*public float GetSpeed()

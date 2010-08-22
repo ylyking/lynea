@@ -38,10 +38,19 @@ public class Player extends PhysicalEntity implements AssetOwner
     /**
      * retreive all Players from database and create the corresponding Players objects
      */
-    static public void init()
+    public static void init()
     {
         all = new HashMap<String, Player>();
         all.put("oli", new Player(null));
+    }
+    public static void updateAllHeadings(int deltaTime)
+    {
+        if(connected == null)
+            return;
+        for(Player player : connected.values())
+        {
+            player.updateHeading(deltaTime);
+        }
     }
 
     public static void hasConnected(User u)
@@ -150,9 +159,19 @@ public class Player extends PhysicalEntity implements AssetOwner
             super.setSpeed(speed);
             if(speed == 0.0f)
                 super.setAnimation("idle1");
-            else if (speed > 0.0f && speed < NPC.walkSpeed)
+            else if (speed > 0.0f && speed <= Player.walkSpeed)
                 super.setAnimation("walk");
         }
+    }
+
+    @Override
+    synchronized public void updateHeading(int deltaTime)
+    {
+        super.updateHeading(deltaTime);
+        if (getSpeed() == 0.0f)
+            super.setAnimation("idle1");
+        else if (getSpeed() > 0.0f && getSpeed() <= Player.walkSpeed)
+            super.setAnimation("walk");
     }
 
 
@@ -162,6 +181,18 @@ public class Player extends PhysicalEntity implements AssetOwner
     public boolean canReceive()
     {
         return canReceiveHeadings;
+    }
+
+    @Override
+    synchronized public boolean animationHasChanged(Player animationReceiver)
+    {
+        //by using the remotePlayer speed, the client is able to determine if the current animation of the remotePlayer is "idle1" or "walk".
+        //So, we don't need to send these messages. As a result, we will return false if one of these two animations has been set
+        if(!animation.equals("idle1") && !animation.equals("walk"))
+        {
+            return super.animationHasChanged(animationReceiver);
+        }
+        return false;
     }
 
 

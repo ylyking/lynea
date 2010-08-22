@@ -97,12 +97,13 @@ public class MoveActionTest {
         {
             WorldUpdater.getInstance().addSimulationTime(deltaTime);
             assertTrue(npc.updateAction(deltaTime));
+            //System.out.println("x = "+npc.getX()+"z = "+npc.getZ()+" s = "+npc.getSpeed());
         }
         while(npc.isAccelerating())
         {
             WorldUpdater.getInstance().addSimulationTime(deltaTime);
             assertTrue(npc.updateAction(deltaTime));
-            System.out.println("x = "+npc.getX()+" s = "+npc.getSpeed());
+            System.out.println("x = "+npc.getX()+"z = "+npc.getZ()+" s = "+npc.getSpeed());
         }
         WorldUpdater.getInstance().addSimulationTime(deltaTime);
         //the move is ended

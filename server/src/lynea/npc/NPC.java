@@ -151,9 +151,19 @@ public class NPC extends PhysicalEntity
             super.setSpeed(speed);
             if(speed == 0.0f)
                 super.setAnimation("idle1");
-            else if (speed > 0.0f && speed < NPC.walkSpeed)
+            else if (speed > 0.0f && speed <= NPC.walkSpeed)
                 super.setAnimation("walk");
         }
+    }
+
+    @Override
+    synchronized public void updateHeading(int deltaTime)
+    {
+        super.updateHeading(deltaTime);
+        if (getSpeed() == 0.0f)
+            super.setAnimation("idle1");
+        else if (getSpeed() > 0.0f && getSpeed() <= NPC.walkSpeed)
+            super.setAnimation("walk");
     }
 
 
@@ -164,6 +174,18 @@ public class NPC extends PhysicalEntity
         System.out.println("<"+WorldUpdater.getInstance().getSimulationTime()+"> stopping in "+stopTime+" ms");
         setAccelerationTime(stopTime);
         setEndSpeed(0);
+    }
+
+    @Override
+    synchronized public boolean animationHasChanged(Player animationReceiver)
+    {
+        //by using the npc speed, the client is able to determine if the current animation of the npc is "idle1" or "walk".
+        //So, we don't need to send these messages. As a result, we will return false if one of these two animations has been set
+        if(!animation.equals("idle1") && !animation.equals("walk"))
+        {
+            return super.animationHasChanged(animationReceiver);
+        }
+        return false;
     }
 
 }

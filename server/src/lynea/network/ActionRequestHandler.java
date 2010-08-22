@@ -25,22 +25,12 @@ public class ActionRequestHandler implements IRequestHandler
     public void onRequest(ActionscriptObject ao, User user, int fromRoom)
     {
         int uid = user.getUserId();
-        extension.trace("DEBUG: r anim from uid="+String.valueOf(uid));
+        
         String mes = (String) ao.get("mes");
-
+        System.out.println("Received "+mes+" from uid="+String.valueOf(uid));
         //nothing to validate at the moment
         Player.connected.get(uid).setAnimation(mes);
-        /*
-        ActionscriptObject res = new ActionscriptObject();
-        res.put("_cmd", "a");
-        res.put("mes", mes);
-        res.putNumber("uid", uid);
-
-        //TODO: interest management for animation sending
-        LinkedList<SocketChannel> recipientList = Player.getAllUserChannelsButOne(user);
-        // Send response
-        extension.sendResponse(res, -1, null, recipientList);
-        */
+  
     }
 
 }

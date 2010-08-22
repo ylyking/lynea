@@ -25,12 +25,14 @@ public class NetworkController : MonoBehaviour {
 		SFSEvent.onJoinRoom += OnJoinRoom;
 		SFSEvent.onPublicMessage += OnPublicMessage;
 		SFSEvent.onExtensionResponse += OnExtensionResponse;
+		ServerClock.Instance.OnClockReady += new EventHandler(OnClockReady);
     }
 	
 	private void UnsubscribeEvents() {
 		SFSEvent.onJoinRoom -= OnJoinRoom;
 		SFSEvent.onPublicMessage -= OnPublicMessage;
 		SFSEvent.onExtensionResponse -= OnExtensionResponse;
+		ServerClock.Instance.OnClockReady -= new EventHandler(OnClockReady);
 	}
 	
 	void FixedUpdate() {
@@ -57,7 +59,7 @@ public class NetworkController : MonoBehaviour {
 	// We should unsubscribe all delegates before quitting the application to avoid probleems.
 	// Also we should Disconnect from server
 	void OnApplicationQuit() {
-		ServerClock.Stop();
+		ServerClock.Instance.Stop();
 		UnsubscribeEvents();
 		smartFoxClient.Disconnect();
 	}
@@ -65,8 +67,11 @@ public class NetworkController : MonoBehaviour {
 	
 	private void OnJoinRoom(Room room) {
 		Debug.Log("Connected ! Initiating ServerClock");
-		ServerClock.Init(-1, true);
-		Debug.Log("return from ServerClock.Init...");
+		ServerClock.Instance.Init(2000, true);
+	}
+	
+	private void OnClockReady(object sender, EventArgs e)
+	{
 		SendMessage("SpawnPlayer");
 	}
 	
@@ -79,7 +84,7 @@ public class NetworkController : MonoBehaviour {
 			SFSObject data = (SFSObject)dataObject;
 			//First determine the type of this object - what it contains ?
 			String _cmd = data.GetString("_cmd");
-			Debug.Log("<@ct="+Time.time+">"+"CMD received : ["+_cmd+"]");
+			//Debug.Log("<@ct="+Time.time+">"+"CMD received : ["+_cmd+"]");
 			switch (_cmd) 
 			{
 				case "h":  // "t" - means transform sync data
@@ -90,7 +95,7 @@ public class NetworkController : MonoBehaviour {
 					//SendAnimationMessagesToGameObjects(data);
 					break;
 				case "c"://"c" - for clock sync messages
-					ServerClock.OnExtensionResponse(data);
+					ServerClock.Instance.OnExtensionResponse(data);
 					break;
 			}
 		}

@@ -201,7 +201,7 @@ function SetUpRotation (centerPos : Vector3, headPos : Vector3)
 	}
 }
 
-function AngleDistance (a : float, b : float)
+function  AngleDistance (a : float, b : float)
 {
 	a = Mathf.Repeat(a, 360);
 	b = Mathf.Repeat(b, 360);

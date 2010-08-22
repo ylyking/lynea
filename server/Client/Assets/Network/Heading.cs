@@ -135,7 +135,7 @@ public class Heading {
 		if(time > 0)
 		{
 			this.accelerationTime = time;
-			this.acceleration = (endSpeed - speed)/accelerationTime;
+			this.acceleration = (endSpeed - speed)/((float)this.accelerationTime/1000.0f);
 			isAccelerating = true;
 		}
 	}
@@ -170,11 +170,13 @@ public class Heading {
 		data.Add("s", this.speed);
 		if(isAccelerating)
 		{
-			data.Add("at", this.accelerationTime);
+			data.Add("at", Convert.ToDouble(this.accelerationTime));
 			data.Add("es", this.endSpeed);
 		}
 		else
+		{
 			data.Add("at",-1);
+		}
 		
 		//send transform sync data. 
 		client.SendXtMessage(extensionName, "h", data);			
@@ -187,13 +189,15 @@ public class Heading {
 		ret+="Heading pos=("+position.x+","+position.y+","+position.z+") ";
 		ret+="angle="+angle+" ";
 		ret+="speed="+speed+" ";
-		ret+="time="+time;
+		ret+="acc="+acceleration+" ";
+		ret+="at="+accelerationTime+" ";
+		ret+="es="+endSpeed+" ";
+		ret+="time="+time+" ";
 		return ret;
 	}
 	
 	public bool IsFutureOf(Heading old)
 	{
-		//if (!objPos.Equals(lastPos) || objAngle != lastAngle || objSpeed != lastSpeed) 
 		if(old == null)
 			return false;
 		//time elapsed between this heading and the old one
@@ -202,23 +206,39 @@ public class Heading {
 		if(old.IsAccelerating())
 		{
 			//time elasped while accelerating from old.speed to old.endSpeed
-			elapsed = Math.Max(elapsed, old.GetAccelerationTime());
+			elapsed = Math.Min(elapsed, (float)old.GetAccelerationTime()/1000.0f);
 			//time elapsed while moving at constant speed with magnitude equal to endSpeed
-			elapsed2 = Math.Max(elapsed - old.GetAccelerationTime(), 0);
+			elapsed2 = Math.Max(elapsed - (float)old.GetAccelerationTime()/1000.0f, 0);
 		}
 		
 		//compute the expected future state of the old heading
-		Vector3 expectedFuture = old.GetPosition() + old.GetSpeed() * elapsed + 0.5f * old.GetAcceleration() * Convert.ToSingle(Math.Pow(elapsed, 2));
-		expectedFuture += (elapsed2 * old.GetEndSpeed()); 
-		float expectedSpeed = old.GetSpeed().magnitude + old.GetAcceleration().magnitude * elapsed;
+		Vector3 expectedPosition = old.GetPosition() + old.GetSpeed() * elapsed + 0.5f * old.GetAcceleration() * Convert.ToSingle(Math.Pow(elapsed, 2));
+		expectedPosition += (elapsed2 * old.GetEndSpeed()); 
+		Vector3 expectedSpeed = old.GetSpeed()+ old.GetAcceleration() * elapsed;
 		float expectedAngle = old.GetAngle();
 		
-		float dp= Vector3.Distance(expectedFuture, position);
-		float ds = (float) Math.Abs(expectedSpeed - speed);
-		float da = (float) Math.Abs(expectedAngle - angle);
+		float dp= Vector3.Distance(expectedPosition, position);
+		float ds = Vector3.Distance(expectedSpeed, GetSpeed());
+		float da =  AngleDistance(expectedAngle, angle);
 		
 		if(dp <  0.05 && ds < 0.05 && da < 0.05)
 			return true;
+		/*Debug.Log("NOT FUTURE");
+		Debug.Log("PAST->EXP. FUTURE: -- pos:"+old.GetPosition()+"->"+expectedPosition+", s:"+old.GetSpeed()+"->"+expectedSpeed+", a:"+old.GetAngle()+"->"+expectedAngle+";old is accel?"+old.IsAccelerating());
+		Debug.Log("REAL FUTURE: -- pos:"+"  "+"->"+position+", s:"+"  "+"->"+GetSpeed()+", a:"+"  "+"->"+GetAngle()+", accel?"+IsAccelerating());
+		Debug.Log("|---> :dpos,ds,da= "+dp+", "+ds+", "+da+".");
+		Debug.Log("expectedSpeed = "+expectedSpeed+" = s_0+a*t_a = "+old.GetSpeed()+"+"+old.GetAcceleration()+"*"+elapsed);
+		Debug.Log("accelTime = "+old.GetAccelerationTime()+", s= "+ GetSpeed()+", ds= "+ds);
+		*/
 		return false;
 	}
+	
+	private float AngleDistance (float a, float b)
+	{
+		a = Mathf.Repeat(a, (float)(2*Math.PI));
+		b = Mathf.Repeat(b, (float)(2*Math.PI));
+		
+		return Mathf.Abs(b - a);
+	}
+	
 }

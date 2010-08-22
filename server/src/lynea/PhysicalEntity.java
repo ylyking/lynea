@@ -29,7 +29,7 @@ public class PhysicalEntity
 
     private float endSpeed = -1;
     private long accelerationTime = -1;
-    private float acceleration = 0;
+    private float acceleration = 0; //component of the acceleration along the local z axis (can be >0 =0 or <0)
     private float initialSpeed = -1;
     private long initialTime = -1;
     private Vector3 initialPosition = null;
@@ -295,7 +295,6 @@ public class PhysicalEntity
         
         if (isAccelerating())
         {
-
             this.accelerationTime -= deltaTime;
             if(this.accelerationTime > 0)
                 this.speed += this.acceleration * elapsedTimeInSec;

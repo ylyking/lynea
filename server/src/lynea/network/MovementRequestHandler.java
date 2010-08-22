@@ -30,10 +30,10 @@ public class MovementRequestHandler implements IRequestHandler
             float z = (float) ao.getNumber("z");
             float alpha = (float) ao.getNumber("a");
             long t = (long) ao.getNumber("t");
-            float speed = (float) ao.getNumber("s");//no yet used
+            float speed = (float) ao.getNumber("s");
             
-            long accelerationTime = (long) ao.getNumber("at");//no yet used
-            float endSpeed;//no yet used
+            long accelerationTime = (long) ao.getNumber("at");
+            float endSpeed;
             if (accelerationTime > 0)
                 endSpeed = (float) ao.getNumber("es");
             else
