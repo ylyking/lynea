@@ -58,7 +58,7 @@ function LateUpdate () {
 	//}
 	
 	// We start snapping when user pressed Fire2!
-	if (Input.GetButton("Fire2") && !isSnapping)
+	if (Input.GetButton("Snap Camera") && !isSnapping)
 	{
 		velocity = Vector3.zero;
 		isSnapping = true;
