@@ -7,7 +7,7 @@ using SmartFoxClientAPI.Data;
 
 public class NPCActionManager : MonoBehaviour
 {
-
+    private bool actionEditorOpened = false;
     private Rect rctWindow;
     private ActionList serverActionHierarchy;
     private ActionList clientActionHierarchy;
@@ -63,6 +63,12 @@ public class NPCActionManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void OnRightClick()
+    {
+        Debug.Log("OnRightClick received!");
+        actionEditorOpened = true;
     }
 
     public void ReceiveActionList(SFSObject list)
@@ -139,7 +145,8 @@ public class NPCActionManager : MonoBehaviour
 
     void OnGUI()
     {
-        rctWindow = GUI.Window(0, rctWindow, ActionEditor, "NPC Action Editor");
+        if(actionEditorOpened)
+            rctWindow = GUI.Window(0, rctWindow, ActionEditor, "NPC Action Editor");
     }
 
     private Vector2 hierarchyScroll = new Vector2(0, 0);
@@ -196,7 +203,7 @@ public class NPCActionManager : MonoBehaviour
         GUILayout.BeginArea(new Rect(libraryRect.x, libraryRect.y + boxTitleHeight, libraryRect.width, libraryRect.height - boxTitleHeight));
         libraryScroll = GUILayout.BeginScrollView(libraryScroll, GUILayout.Width(150), GUILayout.Height(130));
         GUILayout.BeginVertical();
-
+        //TODO
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
@@ -216,9 +223,17 @@ public class NPCActionManager : MonoBehaviour
 
         //Save or Cancel
         Rect saveRect = new Rect(saveX, saveY, saveWidth, saveHeight);
-        GUI.Button(saveRect, "Save");
+        if (GUI.Button(saveRect, "Save"))
+        {
+            GameObject networkController = GameObject.Find("NetworkController");
+            networkController.SendMessage("SendActionList", clientActionHierarchy);
+            actionEditorOpened = false;
+        }
         Rect cancelRect = new Rect(cancelX, cancelY, cancelWidth, cancelHeight);
-        GUI.Button(cancelRect, "Cancel");
+        if (GUI.Button(cancelRect, "Cancel"))
+        {
+            actionEditorOpened = false;
+        }
 
 
         GUI.DragWindow();
