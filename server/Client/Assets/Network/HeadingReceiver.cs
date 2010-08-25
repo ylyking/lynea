@@ -7,7 +7,7 @@ using SmartFoxClientAPI.Data;
 
 public class HeadingReceiver : MonoBehaviour {
 	
-	public float interceptTimeMultiplier = 7;
+	public float interceptTimeMultiplier = 4; //TODO: find the best value
 	public long maxDurationInterceptTime = 800; //Milliseconds
 	
 	private bool receiveMode = false;
@@ -66,7 +66,7 @@ public class HeadingReceiver : MonoBehaviour {
 			transform.position = view.GetPosition();
 			transform.rotation = view.GetRotation();
 			//Debug.Log("VIEW : x="+transform.position.x +" z="+transform.position.z + " sx="+view.GetSpeed().x+ " sz="+view.GetSpeed().z + " courseIsAcc?" +course.IsAccelerating());
-			SendMessage("PlayAnimationFromSpeed", /*(course.IsAccelerating())?0:£*/(view.GetSpeed().magnitude));
+			SendMessage("PlayAnimationFromSpeed", /*(course.IsAccelerating())?0:*/(view.GetSpeed().magnitude));
 		}
 	}
 	

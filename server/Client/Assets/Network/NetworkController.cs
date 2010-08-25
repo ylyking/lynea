@@ -44,7 +44,7 @@ public class NetworkController : MonoBehaviour {
 	#endregion Events
 	
 	// We start working from here
-	void	Start() {
+	void Start() {
 		Application.runInBackground = true; // Let the application be running while the window is not active.
 		smartFoxClient = GetClient();
 		if (smartFoxClient==null) {
