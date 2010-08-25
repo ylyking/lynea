@@ -158,28 +158,8 @@ public class Heading {
 	}
 	// Send heading to server
 	public void Send() {
-		SmartFoxClient client = NetworkController.GetClient();
-		string extensionName = NetworkController.GetExtensionName();
-		
-		Hashtable data = new Hashtable();
-		data.Add("x", this.position.x);
-		data.Add("y", this.position.y);
-		data.Add("z", this.position.z);
-		data.Add("a", this.angle);
-		data.Add("t", Convert.ToDouble(this.time));
-		data.Add("s", this.speed);
-		if(isAccelerating)
-		{
-			data.Add("at", Convert.ToDouble(this.accelerationTime));
-			data.Add("es", this.endSpeed);
-		}
-		else
-		{
-			data.Add("at",-1);
-		}
-		
-		//send transform sync data. 
-		client.SendXtMessage(extensionName, "h", data);			
+        GameObject networkController = GameObject.Find("NetworkController");
+        networkController.SendMessage("SendHeading", this);	
 	}
 	
 

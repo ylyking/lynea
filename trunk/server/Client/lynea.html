@@ -108,7 +108,9 @@
 					
 					document.write('<object id="UnityObject" classid="clsid:444785F1-DE89-4295-863A-D46C3A781394" width="600" height="450"> \n');
 					document.write('  <param name="src" value="lynea.unity3d" /> \n');
-					document.write('  <embed id="UnityEmbed" src="lynea.unity3d" width="600" height="450" type="application/vnd.unity" pluginspage="http://www.unity3d.com/unity-web-player-2.x" /> \n');
+					document.write('  <param name="disableContextMenu" value="true" /> \n');
+
+					document.write('  <embed id="UnityEmbed" src="lynea.unity3d" width="600" height="450" type="application/vnd.unity" pluginspage="http://www.unity3d.com/unity-web-player-2.x"  disableContextMenu="true" /> \n');
 					document.write('</object>');
 					
 					// if Unity does not define to GetPluginVersion on Safari on 10.6, we presume the plugin
@@ -179,7 +181,9 @@
 			<noscript>
 				<object id="UnityObject" classid="clsid:444785F1-DE89-4295-863A-D46C3A781394" width="600" height="450" codebase="http://webplayer.unity3d.com/download_webplayer-2.x/UnityWebPlayer.cab#version=2,0,0,0">
 					<param name="src" value="lynea.unity3d" />
-					<embed id="UnityEmbed" src="lynea.unity3d" width="600" height="450" type="application/vnd.unity" pluginspage="http://www.unity3d.com/unity-web-player-2.x" />
+					<param name="disableContextMenu" value="true" />
+
+					<embed id="UnityEmbed" src="lynea.unity3d" width="600" height="450" type="application/vnd.unity" pluginspage="http://www.unity3d.com/unity-web-player-2.x" disableContextMenu="true" />
 					<noembed>
 						<div align="center">
 							This content requires the Unity Web Player<br /><br />

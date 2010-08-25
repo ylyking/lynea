@@ -9,6 +9,7 @@ public class PlayerSpawnController : MonoBehaviour {
 
 	public Transform localPlayerObject; //Note: we leave local player as object and do not instantiate it to keep existing Island Demo scripts working.
 	public Transform remotePlayerPrefab;
+    public Transform NPCPrefab;
 	
     void SpawnPlayer() {
 		SpawnLocalPlayer();  // Spawn local player object
@@ -27,17 +28,17 @@ public class PlayerSpawnController : MonoBehaviour {
 		//Give remote player a name like "remote_<id>" to easily find him then
 		remotePlayer.name = "remotePlayer_"+userId;
 		
-		//Start receiving trasnform synchronization messages
+		//Start receiving heading synchronization messages
 		(remotePlayer as Component).SendMessage("StartReceiving");
 	}
 	private void SpawnNPC(string name) {
-		// Just spawn remote player at a very remote point
-		UnityEngine.Object npc = Instantiate(remotePlayerPrefab, new Vector3(-10000, -10000, -10000), new Quaternion(0,0,0,1));
+		// Just spawn npc at a very remote point
+        UnityEngine.Object npc = Instantiate(NPCPrefab, new Vector3(-10000, -10000, -10000), new Quaternion(0, 0, 0, 1));
 		
-		//Give remote player a name like "npc_<name>" to easily find him then
+		//Give npc a name like "npc_<name>" to easily find him then
 		npc.name = "npc_"+name;
-		
-		//Start receiving trasnform synchronization messages
+
+        //Start receiving heading synchronization messages
 		(npc as Component).SendMessage("StartReceiving");
 	}
 	

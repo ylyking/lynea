@@ -184,7 +184,6 @@ function Update() {
 
 	UpdateSmoothedMovementDirection();
 	
-	
 	// Calculate actual motion
 	var movement = moveDirection * moveSpeed;
 	movement *= Time.deltaTime;
@@ -192,6 +191,8 @@ function Update() {
 	// Move the controller
 	var controller : CharacterController = GetComponent(CharacterController);
 	collisionFlags = controller.Move(movement);
+	// Force grounding
+	transform.position.y = 0;
 	
 	// Set rotation to the move direction	
 	transform.rotation = Quaternion.LookRotation(moveDirection);
@@ -214,8 +215,6 @@ function GetAccelerationTime() {
 function IsAccelerating() {
 	return isAccelerating;
 }
-
-
 
 function GetDirection () {
 	return moveDirection;

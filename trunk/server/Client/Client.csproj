@@ -49,6 +49,7 @@
     <Compile Include="Assets\Examples\DressingroomExample\Glow\ImageEffects.cs" />
     <Compile Include="Assets\Examples\DressingroomExample\MirrorReflection\MirrorReflection.cs" />
     <Compile Include="Assets\GUI\FPS\FPSStorage.cs" />
+    <Compile Include="Assets\GUI\InputDispatcher.cs" />
     <Compile Include="Assets\GUI\NPC Action Management\Action.cs" />
     <Compile Include="Assets\GUI\NPC Action Management\ActionList.cs" />
     <Compile Include="Assets\GUI\NPC Action Management\NPCActionManager.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Assets\Network\HeadingSender.cs" />
     <Compile Include="Assets\Network\LoginGUI.cs" />
     <Compile Include="Assets\Network\NetworkController.cs" />
+    <Compile Include="Assets\Network\NetworkSender.cs" />
     <Compile Include="Assets\Network\PlayerSpawnController.cs" />
     <Compile Include="Assets\Network\ServerClock.cs" />
     <Compile Include="Assets\Network\SmartFox.cs" />
@@ -107,6 +109,7 @@
     <Reference Include="SmartFoxClient">
       <HintPath>Assets\Plugins\Network\SmartFoxClient.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
