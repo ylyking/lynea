@@ -22,7 +22,7 @@ public class BubblePopup : MonoBehaviour {
 			// We render our text only if it's in the screen view port	
 			if (screenPos.x >= 0 && screenPos.x <= Screen.width && screenPos.y >= 0 && screenPos.y <= Screen.height && screenPos.z >= 0 ) {
 				Vector2 pos = GUIUtility.ScreenToGUIPoint(new Vector2(screenPos.x, Screen.height - screenPos.y));
-				GUI.Box(new Rect(pos.x-40, pos.y, textSize.x + 5, textSize.y + 20), content);  // Add our offset (5, 20) to size here
+				GUI.Box(new Rect(pos.x, pos.y, textSize.x + 5, textSize.y + 20), content);  // Add our offset (5, 20) to size here
 			}
 		}
 	}

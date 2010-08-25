@@ -66,8 +66,8 @@ public class HeadingSender : MonoBehaviour {
 		
 		if(headingChanged)
 		{
-			Debug.Log("last: "+lastState);
-			Debug.Log("curr: "+current);
+			//Debug.Log("last: "+lastState);
+			//Debug.Log("curr: "+current);
 			lastState = current;
 			lastState.Send();
 		}

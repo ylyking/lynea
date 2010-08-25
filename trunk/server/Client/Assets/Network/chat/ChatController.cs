@@ -18,27 +18,32 @@ public class ChatController : MonoBehaviour {
 	private string userMessage = "";
 	
 	private bool typingMessage = false;
-	private bool sendingMessage = false;
-		
+    private bool wasTypingMessage = false;	
 		
 	void Start() {
-		chatWindow = new Rect(Screen.width-290, Screen.height - 250, 280, 240);
+		chatWindow = new Rect(0+0.02f*Screen.width, Screen.height -150-0.02f*Screen.height, Screen.width-0.04f*Screen.width, 150/*- 250, 280, 240*/);
 	}
 
-
+    
 	void OnGUI() {
 		GUI.skin = skin;
 		
-		if (EnterPressed()) {
-			if (!typingMessage) {
+		if (EnterPressed()) 
+        {
+			if (!typingMessage) 
+            {
 				 typingMessage = true;
 			}
-			else {
+			else 
+            {
 				// Send message
-	   	    	if (userMessage.Length > 0) {
+	   	    	if (userMessage.Length > 0) 
+                {
 					AddMyChatMessage(userMessage);
 					userMessage = "";
 				}
+                if (typingMessage)
+                    wasTypingMessage = true;
 				typingMessage = false;
 			}
 			Event.current.Use();	 
@@ -61,10 +66,13 @@ public class ChatController : MonoBehaviour {
 			GUILayout.EndHorizontal();
 			GUILayout.Space(3);
 		}
-				
 	    GUILayout.EndScrollView();
-	   	if (!typingMessage) {
+
+        
+	   	if (!typingMessage && wasTypingMessage) 
+        {
 	   		 GUI.FocusControl("scroll");
+             wasTypingMessage = false;
 	   	}
 	   	
 	   	GUI.SetNextControlName("text"); 
