@@ -5,22 +5,23 @@ using UnityEngine;
 
 public class InputDispatcher : MonoBehaviour
 {
+    private Ray ray;
     void Update()
     {
         if (Input.GetButtonDown("Fire2"))
         {
-            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
-            //Debug.DrawRay(ray.origin, ray.direction * 10, Color.yellow);
+            ray = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));   
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider != null)
                 {
-                    if (hit.collider.GetComponent<NPCActionManager>() != null)
+                    if (hit.collider.GetComponent<NPCMenu>() != null)
                         hit.collider.SendMessage("OnRightClick");
                 }
             }
             
         }
+        Debug.DrawRay(ray.origin, ray.direction * 10, Color.yellow);
     }
 }

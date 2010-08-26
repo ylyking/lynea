@@ -1,115 +1,118 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0604D300-BAF3-D1AF-C35A-47ACA99CEEFE}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Irrelevant</RootNamespace>
-    <AssemblyName>Irrelvant</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{0604D300-BAF3-D1AF-C35A-47ACA99CEEFE}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>Irrelevant</RootNamespace>
+	<AssemblyName>Irrelvant</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+	<Reference Include="System" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Core" />
-    <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor/Data/lib/UnityEngine-Debug.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor/Data/lib/UnityEditor.dll</HintPath>
-    </Reference>
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files/Unity/Editor/Data/lib/UnityEngine-Debug.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files/Unity/Editor/Data/lib/UnityEditor.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Examples\SkinTest.cs" />
-    <Compile Include="Assets\Examples\SkinTestMod.cs" />
-    <Compile Include="Assets\Examples\DressingroomExample\Main.cs" />
-    <Compile Include="Assets\Examples\DressingroomExample\Glow\GlowEffect.cs" />
-    <Compile Include="Assets\Examples\DressingroomExample\Glow\ImageEffects.cs" />
-    <Compile Include="Assets\Examples\DressingroomExample\MirrorReflection\MirrorReflection.cs" />
-    <Compile Include="Assets\GUI\FPS\FPSStorage.cs" />
-    <Compile Include="Assets\GUI\InputDispatcher.cs" />
-    <Compile Include="Assets\GUI\NPC Action Management\Action.cs" />
-    <Compile Include="Assets\GUI\NPC Action Management\ActionList.cs" />
-    <Compile Include="Assets\GUI\NPC Action Management\NPCActionManager.cs" />
-    <Compile Include="Assets\Network\AnimationSynchronizer.cs" />
-    <Compile Include="Assets\Network\Heading.cs" />
-    <Compile Include="Assets\Network\HeadingReceiver.cs" />
-    <Compile Include="Assets\Network\HeadingSender.cs" />
-    <Compile Include="Assets\Network\LoginGUI.cs" />
-    <Compile Include="Assets\Network\NetworkController.cs" />
-    <Compile Include="Assets\Network\NetworkSender.cs" />
-    <Compile Include="Assets\Network\PlayerSpawnController.cs" />
-    <Compile Include="Assets\Network\ServerClock.cs" />
-    <Compile Include="Assets\Network\SmartFox.cs" />
-    <Compile Include="Assets\Network\chat\BubblePopup.cs" />
-    <Compile Include="Assets\Network\chat\ChatController.cs" />
-    <Compile Include="Assets\Old\NetworkTransform.cs" />
-    <Compile Include="Assets\Old\NetworkTransformReceiver.cs" />
-    <Compile Include="Assets\Old\NetworkTransformSender.cs" />
-    <Compile Include="Assets\Old\TestB.cs" />
-    <Compile Include="Assets\Plugins\CharacterElement.cs" />
-    <Compile Include="Assets\Plugins\CharacterElementHolder.cs" />
-    <Compile Include="Assets\Plugins\CharacterGenerator.cs" />
-    <Compile Include="Assets\Plugins\StringHolder.cs" />
-    <Compile Include="Assets\Plugins\Editor\CreateAssetbundles.cs" />
-    <Compile Include="Assets\Plugins\Editor\EditorHelpers.cs" />
-    <Compile Include="Assets\Plugins\Editor\FBXPostprocessor.cs" />
-    <Compile Include="Assets\Plugins\Editor\GenerateMaterials.cs" />
-    <Compile Include="Assets\Plugins\Editor\MassMaterialEditor.cs" />
-    <Compile Include="Assets\Plugins\Editor\UpdateCharacterElementDatabase.cs" />
-    <Compile Include="Assets\Standard Assets\Camera Scripts\MouseLook.cs" />
-    <Compile Include="Assets\Standard Assets\Scripts\ActivateTrigger.cs" />
-    <Compile Include="Assets\Standard Assets\Scripts\CombineChildren.cs" />
-    <Compile Include="Assets\Standard Assets\Scripts\MeshCombineUtility.cs" />
-    <Compile Include="Assets\Standard Assets\Water\Sources\WaterSimple.cs" />
-    <None Include="Assets\Examples\DressingroomExample\Glow\GlowEffectDownsample.shader" />
-    <None Include="Assets\Examples\DressingroomExample\MirrorReflection\MirrorReflection.shader" />
-    <None Include="Assets\Standard Assets\Blob-Shadow\ShadowProjection.shader" />
-    <None Include="Assets\Standard Assets\Water\Sources\FX-Water Simple.shader" />
-    <None Include="Assets\Camera\FollowCamera.js" />
-    <None Include="Assets\GUI\FPS\FPSCounter.js" />
-    <None Include="Assets\Old\FollowCamera - with progressive rotation.js" />
-    <None Include="Assets\Old\PlayerAnimation.js" />
-    <None Include="Assets\Old\PlayerController.js" />
-    <None Include="Assets\Old\TestA.js" />
-    <None Include="Assets\Old\ThirdPersonController - Copie (original).js" />
-    <None Include="Assets\Old\ThirdPersonController - with rotation around cam.js" />
-    <None Include="Assets\Old\ThirdPersonController_avant_chang_axes.js" />
-    <None Include="Assets\Player\CharacterGeneration.js" />
-    <None Include="Assets\Player\ThirdPersonPlayerAnimation.js" />
-    <None Include="Assets\Standard Assets\ThirdPersonController.js" />
-    <None Include="Assets\Standard Assets\Camera Scripts\MouseOrbit.js" />
-    <None Include="Assets\Standard Assets\Camera Scripts\SmoothFollow.js" />
-    <None Include="Assets\Standard Assets\Camera Scripts\SmoothLookAt.js" />
-    <None Include="Assets\Standard Assets\Scripts\DragRigidbody.js" />
-    <None Include="Assets\Standard Assets\Scripts\FPSWalker.js" />
-    <None Include="Assets\Standard Assets\Scripts\TimedObjectDestructor.js" />
-    <Reference Include="SmartFoxClient">
-      <HintPath>Assets\Plugins\Network\SmartFoxClient.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data" />
+     <Compile Include="Assets\Examples\SkinTest.cs" />
+     <Compile Include="Assets\Examples\SkinTestMod.cs" />
+     <Compile Include="Assets\Examples\DressingroomExample\Main.cs" />
+     <Compile Include="Assets\Examples\DressingroomExample\Glow\GlowEffect.cs" />
+     <Compile Include="Assets\Examples\DressingroomExample\Glow\ImageEffects.cs" />
+     <Compile Include="Assets\Examples\DressingroomExample\MirrorReflection\MirrorReflection.cs" />
+     <Compile Include="Assets\GUI\InputDispatcher.cs" />
+     <Compile Include="Assets\GUI\FPS\FPSStorage.cs" />
+     <Compile Include="Assets\GUI\NPC\NPCMenu.cs" />
+     <Compile Include="Assets\GUI\NPC\NPC Action Management\Action.cs" />
+     <Compile Include="Assets\GUI\NPC\NPC Action Management\ActionList.cs" />
+     <Compile Include="Assets\GUI\NPC\NPC Action Management\NPCActionManager.cs" />
+     <Compile Include="Assets\GUI\NPC\NPC Action Management\PopTest.cs" />
+     <Compile Include="Assets\Network\AnimationSynchronizer.cs" />
+     <Compile Include="Assets\Network\Heading.cs" />
+     <Compile Include="Assets\Network\HeadingReceiver.cs" />
+     <Compile Include="Assets\Network\HeadingSender.cs" />
+     <Compile Include="Assets\Network\LoginGUI.cs" />
+     <Compile Include="Assets\Network\NetworkController.cs" />
+     <Compile Include="Assets\Network\NetworkSender.cs" />
+     <Compile Include="Assets\Network\PlayerSpawnController.cs" />
+     <Compile Include="Assets\Network\ServerClock.cs" />
+     <Compile Include="Assets\Network\SmartFox.cs" />
+     <Compile Include="Assets\Network\chat\BubblePopup.cs" />
+     <Compile Include="Assets\Network\chat\ChatController.cs" />
+     <Compile Include="Assets\Old\NetworkTransform.cs" />
+     <Compile Include="Assets\Old\NetworkTransformReceiver.cs" />
+     <Compile Include="Assets\Old\NetworkTransformSender.cs" />
+     <Compile Include="Assets\Old\TestB.cs" />
+     <Compile Include="Assets\Plugins\CharacterElement.cs" />
+     <Compile Include="Assets\Plugins\CharacterElementHolder.cs" />
+     <Compile Include="Assets\Plugins\CharacterGenerator.cs" />
+     <Compile Include="Assets\Plugins\StringHolder.cs" />
+     <Compile Include="Assets\Plugins\Editor\CreateAssetbundles.cs" />
+     <Compile Include="Assets\Plugins\Editor\EditorHelpers.cs" />
+     <Compile Include="Assets\Plugins\Editor\FBXPostprocessor.cs" />
+     <Compile Include="Assets\Plugins\Editor\GenerateMaterials.cs" />
+     <Compile Include="Assets\Plugins\Editor\MassMaterialEditor.cs" />
+     <Compile Include="Assets\Plugins\Editor\UpdateCharacterElementDatabase.cs" />
+     <Compile Include="Assets\Standard Assets\Camera Scripts\MouseLook.cs" />
+     <Compile Include="Assets\Standard Assets\Scripts\ActivateTrigger.cs" />
+     <Compile Include="Assets\Standard Assets\Scripts\CombineChildren.cs" />
+     <Compile Include="Assets\Standard Assets\Scripts\ContextMenu.cs" />
+     <Compile Include="Assets\Standard Assets\Scripts\MeshCombineUtility.cs" />
+     <Compile Include="Assets\Standard Assets\Scripts\Popup.cs" />
+     <Compile Include="Assets\Standard Assets\Water\Sources\WaterSimple.cs" />
+     <None Include="Assets\Examples\DressingroomExample\Glow\GlowEffectDownsample.shader" />
+     <None Include="Assets\Examples\DressingroomExample\MirrorReflection\MirrorReflection.shader" />
+     <None Include="Assets\Standard Assets\Blob-Shadow\ShadowProjection.shader" />
+     <None Include="Assets\Standard Assets\Water\Sources\FX-Water Simple.shader" />
+     <None Include="Assets\Camera\FollowCamera.js" />
+     <None Include="Assets\GUI\FPS\FPSCounter.js" />
+     <None Include="Assets\Old\FollowCamera - with progressive rotation.js" />
+     <None Include="Assets\Old\PlayerAnimation.js" />
+     <None Include="Assets\Old\PlayerController.js" />
+     <None Include="Assets\Old\TestA.js" />
+     <None Include="Assets\Old\ThirdPersonController - Copie (original).js" />
+     <None Include="Assets\Old\ThirdPersonController - with rotation around cam.js" />
+     <None Include="Assets\Old\ThirdPersonController_avant_chang_axes.js" />
+     <None Include="Assets\Player\CharacterGeneration.js" />
+     <None Include="Assets\Player\ThirdPersonPlayerAnimation.js" />
+     <None Include="Assets\Standard Assets\ThirdPersonController.js" />
+     <None Include="Assets\Standard Assets\Camera Scripts\MouseOrbit.js" />
+     <None Include="Assets\Standard Assets\Camera Scripts\SmoothFollow.js" />
+     <None Include="Assets\Standard Assets\Camera Scripts\SmoothLookAt.js" />
+     <None Include="Assets\Standard Assets\Scripts\DragRigidbody.js" />
+     <None Include="Assets\Standard Assets\Scripts\FPSWalker.js" />
+     <None Include="Assets\Standard Assets\Scripts\TimedObjectDestructor.js" />
+ <Reference Include="SmartFoxClient">
+ <HintPath>Assets\Plugins\Network\SmartFoxClient.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -120,3 +123,4 @@
   </Target>
   -->
 </Project>
+	
