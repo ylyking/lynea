@@ -65,11 +65,11 @@ public class NPCActionManager : MonoBehaviour
 
     }
 
-    public void OnRightClick()
+    public void OpenActionEditor()
     {
-        Debug.Log("OnRightClick received!");
         actionEditorOpened = true;
     }
+
 
     public void ReceiveActionList(SFSObject list)
     {
