@@ -34,22 +34,60 @@ public class NPCActionManager : MonoBehaviour
         monparam2.Put("n", "monparam2");
         monparam2.Put("t", "b");
         monparam2.PutBool("v", true);
+        SFSObject monparam3 = new SFSObject();
+        monparam3.Put("n", "monparam3");
+        monparam3.Put("t", "mi");
+        monparam3.Put("v", "5");
+        monparam3.PutNumber("m", 1);
         SFSObject monaction = new SFSObject();
         monaction.Put("n", "monaction");
         monaction.Put("0", monparam);
         monaction.Put("1", monparam2);
+        monaction.Put("2", monparam3);
 
-        SFSObject monparam3 = new SFSObject();
-        monparam3.Put("n", "monparam3");
-        monparam3.Put("t", "b");
-        monparam3.PutBool("v", false);
+        SFSObject monparam4 = new SFSObject();
+        monparam4.Put("n", "monparam4");
+        monparam4.Put("t", "b");
+        monparam4.PutBool("v", false);
+        SFSObject monparam5 = new SFSObject();
+        monparam5.Put("n", "monparam5");
+        monparam5.Put("t", "mi");
+        monparam5.Put("v", "16");
+        monparam5.PutNumber("m", -6);
         SFSObject monaction2 = new SFSObject();
         monaction2.Put("n", "monaction2");
-        monaction2.Put("0", monparam3);
+        monaction2.Put("0", monparam4);
+        monaction2.Put("1", monparam5);
+
+        SFSObject monparam6 = new SFSObject();
+        monparam6.Put("n", "monparam6");
+        monparam6.Put("t", "b");
+        monparam6.PutBool("v", true);
+        SFSObject monparam7 = new SFSObject();
+        monparam7.Put("n", "monparam7");
+        monparam7.Put("t", "mi");
+        monparam7.Put("v", "55");
+        monparam7.PutNumber("m", -7);
+        SFSObject monparam8 = new SFSObject();
+        monparam8.Put("n", "monparam8");
+        monparam8.Put("t", "b");
+        monparam8.PutBool("v", false);
+        SFSObject monparam9 = new SFSObject();
+        monparam9.Put("n", "monparam9");
+        monparam9.Put("t", "mi");
+        monparam9.Put("v", "300");
+        monparam9.PutNumber("m", 0);
+        SFSObject monaction3 = new SFSObject();
+        monaction3.Put("n", "monaction3");
+        monaction3.Put("0", monparam6);
+        monaction3.Put("1", monparam7);
+        monaction3.Put("2", monparam8);
+        monaction3.Put("3", monparam9);
 
         SFSObject monactionhierarchy = new SFSObject();
         monactionhierarchy.Put("0", monaction);
-        monactionhierarchy.Put("1", monaction2);
+        monactionhierarchy.Put("2", monaction2);
+        monactionhierarchy.Put("1", monaction3);
 
         SFSObject monactionlibrary = new SFSObject();
         SFSObject maliste = new SFSObject();
@@ -94,7 +132,7 @@ public class NPCActionManager : MonoBehaviour
             action.name = actionObject.GetString("n");
             int numParam = actionObject.Size();
             for (int i = 0; i < numParam - 1; i++)
-            {
+            {             
                 SFSObject param = actionObject.GetObj(Convert.ToString(i));
                 string paramName = param.GetString("n");
                 string paramType = param.GetString("t");
@@ -104,14 +142,19 @@ public class NPCActionManager : MonoBehaviour
                         bool boolValue = param.GetBool("v");
                         action.AddBoolParam(paramName, boolValue);
                         break;
-                    case "ma"://maximum quantity (integer > 0 or "MAX")
+                    case "maq"://maximum quantity (integer > 0 or "MAX")
                         //
                         break;
-                    case "mi"://minimum quantity (integer > 0 or "MIN")
+                    case "miq"://minimum quantity (integer > 0 or "MIN")
                         //
                         break;
                     case "n"://integer with min and max values
                         //
+                        break;
+                    case "mi"://minored integer : integer with min value or "INF"
+                        string value = param.GetString("v");
+                        int minValue = (int) param.GetNumber("m");
+                        action.AddMinoredIntegerParam(paramName, value, minValue);
                         break;
                     case "ii"://inventory item
                         //
@@ -152,7 +195,6 @@ public class NPCActionManager : MonoBehaviour
     private Vector2 hierarchyScroll = new Vector2(0, 0);
     private Vector2 libraryScroll = new Vector2(0, 0);
     private Vector2 inspectorScroll = new Vector2(0, 0);
-
     void ActionEditor(int windowID)
     {
         //GUI params:
@@ -189,7 +231,7 @@ public class NPCActionManager : MonoBehaviour
         Rect hierarchyRect = new Rect(hierarchyX, hierarchyY, hierarchyWidth, hierarchyHeight);
         GUI.Box(hierarchyRect, "Action Hierarchy");
         GUILayout.BeginArea(new Rect(hierarchyRect.x, hierarchyRect.y + boxTitleHeight, hierarchyRect.width, hierarchyRect.height - boxTitleHeight));
-        hierarchyScroll = GUILayout.BeginScrollView(hierarchyScroll, GUILayout.Width(150), GUILayout.Height(130));
+        hierarchyScroll = GUILayout.BeginScrollView(hierarchyScroll, GUILayout.Width(hierarchyRect.width), GUILayout.Height(hierarchyRect.height));
         if (hasReceivedActionList)
         {
             clientActionHierarchy.DisplayInHierarchy();
@@ -201,18 +243,19 @@ public class NPCActionManager : MonoBehaviour
         Rect libraryRect = new Rect(libraryX, libraryY, libraryWidth, libraryHeight);
         GUI.Box(libraryRect, "Action Library");
         GUILayout.BeginArea(new Rect(libraryRect.x, libraryRect.y + boxTitleHeight, libraryRect.width, libraryRect.height - boxTitleHeight));
-        libraryScroll = GUILayout.BeginScrollView(libraryScroll, GUILayout.Width(150), GUILayout.Height(130));
+        inspectorScroll = GUILayout.BeginScrollView(inspectorScroll, GUILayout.Width(libraryRect.width), GUILayout.Height(libraryRect.height)); 
         GUILayout.BeginVertical();
-        //TODO
+        //temp
+        //GUILayout.Label("focus: " + GUI.GetNameOfFocusedControl());
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
 
         //Action Inspector
         Rect inspectorRect = new Rect(inspectorX, inspectorY, inspectorWidth, inspectorHeight);
-        GUI.Box(inspectorRect, "Action Inspector");
+        GUI.Box(inspectorRect, "Parameters of " + clientActionHierarchy.GetCurrentAction().name);
         GUILayout.BeginArea(new Rect(inspectorRect.x, inspectorRect.y + boxTitleHeight, inspectorRect.width, inspectorRect.height - boxTitleHeight));
-        inspectorScroll = GUILayout.BeginScrollView(inspectorScroll, GUILayout.Width(150), GUILayout.Height(130));
+        inspectorScroll = GUILayout.BeginScrollView(inspectorScroll, GUILayout.Width(inspectorRect.width), GUILayout.Height(inspectorRect.height)); 
         if (hasReceivedActionList)
         {
             clientActionHierarchy.GetCurrentAction().DisplayInspectorContent();
