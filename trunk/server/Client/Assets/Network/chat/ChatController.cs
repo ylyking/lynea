@@ -17,11 +17,11 @@ public class ChatController : MonoBehaviour {
 	private Rect chatWindow;
 	private string userMessage = "";
 	
-	private bool typingMessage = false;
-    private bool wasTypingMessage = false;	
+	//private bool typingMessage = false;
+    //private bool wasTypingMessage = false;	
 		
 	void Start() {
-		chatWindow = new Rect(0+0.02f*Screen.width, Screen.height -150-0.02f*Screen.height, Screen.width-0.04f*Screen.width, 150/*- 250, 280, 240*/);
+		chatWindow = new Rect(0+0.02f*Screen.width, Screen.height -120-0.02f*Screen.height, Screen.width-0.04f*Screen.width, 120/*- 250, 280, 240*/);
 	}
 
     
@@ -30,26 +30,26 @@ public class ChatController : MonoBehaviour {
 		
 		if (EnterPressed()) 
         {
-			if (!typingMessage) 
+			/*if (!typingMessage) 
             {
 				 typingMessage = true;
-			}
-			else 
-            {
+			}*/
+			//else 
+            //{
 				// Send message
 	   	    	if (userMessage.Length > 0) 
                 {
 					AddMyChatMessage(userMessage);
 					userMessage = "";
 				}
-                if (typingMessage)
+                /*if (typingMessage)
                     wasTypingMessage = true;
-				typingMessage = false;
-			}
+				typingMessage = false;*/
+			//}
 			Event.current.Use();	 
-		}	
-		
-		chatWindow = GUI.Window (1, chatWindow, ShowChatWindow, "Chat");
+		}
+
+        chatWindow = GUILayout.Window(1, chatWindow, ShowChatWindow, "Chat", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
 	}
 	
 	private bool EnterPressed() {
@@ -57,7 +57,7 @@ public class ChatController : MonoBehaviour {
 	}
 	
 	void ShowChatWindow(int id) {	
-		GUI.SetNextControlName("scroll"); 
+		//GUI.SetNextControlName("scroll"); 
 		scrollPosition = GUILayout.BeginScrollView (scrollPosition);
 		foreach(string message in messages) {
 			GUILayout.BeginHorizontal();
@@ -69,19 +69,19 @@ public class ChatController : MonoBehaviour {
 	    GUILayout.EndScrollView();
 
         
-	   	if (!typingMessage && wasTypingMessage) 
+	   	/*if (!typingMessage && wasTypingMessage) 
         {
 	   		 GUI.FocusControl("scroll");
              wasTypingMessage = false;
-	   	}
+	   	}*/
 	   	
-	   	GUI.SetNextControlName("text"); 
+	   	//GUI.SetNextControlName("text"); 
 	   	userMessage = GUILayout.TextField(userMessage);
-	   	if (typingMessage) {
+	   	/*if (typingMessage) {
 	   		 GUI.FocusControl("text");
-		}
+		}*/
 		
-		GUILayout.Label("Press Enter to type and again to send");
+		//GUILayout.Label("Press Enter to type and again to send");
 	}
 	
 	private void AddMyChatMessage(String message) {
