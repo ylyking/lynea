@@ -24,10 +24,9 @@ public class MoveAction extends ActionElement implements AttackListener
     private boolean hasBeenAttacked = false;
     private float stopDistance;
 
-    public MoveAction(String name, NPC npc, ActionMark begin, ActionMark end)
+    public MoveAction(String name, NPC npc, ActionMark end)
     {
         super(name, npc);
-        this.begin = begin;
         this.end = end;
         this.current = (ActionMark) begin.clone();
         this.current.setVisible(false);
@@ -41,6 +40,8 @@ public class MoveAction extends ActionElement implements AttackListener
         if(!super.update(deltaTime))
             return false;
 
+        //TODO: smooth rotation
+        
         //TODO: path finding
         
         npc.updateHeading(deltaTime);
@@ -53,10 +54,6 @@ public class MoveAction extends ActionElement implements AttackListener
                 //calculate the real stop time (<= NPC.maxStopTime) needed to arrive at the destination with zero speed
                 long realStopTime = Math.round(current.distance(end)*2/speed * 1000);
                 npc.stop(realStopTime);
-                //bad : not scalable
-                //WorldSender sender = WorldSender.getInstance();
-                //if (sender!= null)
-                //    sender.sendHeadingOfSender(npc);
             }
             stopping = true;
         }
@@ -76,6 +73,7 @@ public class MoveAction extends ActionElement implements AttackListener
         System.out.println(getName()+".start()");
         npc.setAnimation("walk");
         speed = npc.getSpeed();
+        begin = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
         setNPCInitialHeading();
 
         float stopTimeInSec = ((float)NPC.maxStopTime)/1000.0f;
@@ -89,6 +87,7 @@ public class MoveAction extends ActionElement implements AttackListener
         System.out.println(getName()+".end()");
         //fix the position which could not be 100% correct as we use non infinitesimal time steps (worldUpdatePeriod)
         npc.setPosition(this.end);
+        npc.setAnimation("idle1");
         super.end();
     }
     
@@ -129,11 +128,10 @@ public class MoveAction extends ActionElement implements AttackListener
 
     private void setNPCInitialHeading()
     {
-        npc.setPosition(begin.getX(), begin.getY(), begin.getZ());
         //alpha is the angle between the current facing direction and the global z axis
         float alpha = (float) (Math.PI/2 - Math.atan2(end.getZ()-begin.getZ(), end.getX()-begin.getX()));
         npc.setAngle(alpha);
-        npc.setSpeed(NPC.walkSpeed);//this automatically sets the "walk" anim so no need to for this line:
+        npc.setSpeed(NPC.walkSpeed);//this automatically sets the "walk" anim so no need for this line:
         //npc.setAnimation("walk");
         npc.setHeadingUpdateTime();
     }

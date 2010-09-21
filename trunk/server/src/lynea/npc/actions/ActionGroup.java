@@ -42,7 +42,7 @@ public class ActionGroup extends Action implements Iterable<Action>
         if(!isPaused())
         {
             //we check whether the child action that has just ended is the last action in the action list
-            if(actions.indexOf(child) != actions.size( ) - 1)
+            if(actions.indexOf(child) != actions.size() - 1)
             {
                 currentAction = actions.get(actions.indexOf(child) + 1);
                 currentAction.start();

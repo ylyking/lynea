@@ -7,6 +7,7 @@ package lynea.npc.actions;
 
 import lynea.AssetOwner;
 import lynea.PhysicalEntity;
+import lynea.npc.actions.Deposit.Type;
 
 /**
  *
@@ -45,5 +46,9 @@ public class ActionMark extends PhysicalEntity implements Cloneable
     public void setVisible(boolean status)
     {
         isVisible = status;
+    }
+
+    Deposit[] getNearbyDeposits(Type type) {
+        throw new UnsupportedOperationException("getNearbyDeposits - Not yet implemented");
     }
 }
