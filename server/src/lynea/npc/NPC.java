@@ -47,25 +47,21 @@ public class NPC extends PhysicalEntity
 
         WaitAction wait0 = new WaitAction("Wait0", testNPC, 7000);
         testNPC.addAction(wait0);
-        ActionMark start1 = new ActionMark(-5.0f,0.0f,5.0f, Player.all.get("oli"), true);
         ActionMark finish1 = new ActionMark(5.0f,0.0f,5.0f, Player.all.get("oli"), true);
-        MoveAction move1 = new MoveAction("Move1", testNPC, start1, finish1);
+        MoveAction move1 = new MoveAction("Move1", testNPC, finish1);
         testNPC.addAction(move1);
         WaitAction wait1 = new WaitAction("Wait1", testNPC, 3000);
         testNPC.addAction(wait1);
-        ActionMark start2 = finish1;
         ActionMark finish2 = new ActionMark(-4.0f,0.0f,-5.0f, Player.all.get("oli"), true);
-        MoveAction move2 = new MoveAction("Move2", testNPC, start2, finish2);
+        MoveAction move2 = new MoveAction("Move2", testNPC, finish2);
         testNPC.addAction(move2);
         WaitAction wait2= new WaitAction("Wait2", testNPC, 4000);
         testNPC.addAction(wait2);
-        ActionMark start3 = finish2;
         ActionMark finish3 = new ActionMark(-4.0f,0.0f,6.0f, Player.all.get("oli"), true);
-        MoveAction move3 = new MoveAction("Move3", testNPC, start3, finish3);
+        MoveAction move3 = new MoveAction("Move3", testNPC, finish3);
         testNPC.addAction(move3);
-        ActionMark start4 = finish3;
         ActionMark finish4 = new ActionMark(0.0f,0.0f,0.0f, Player.all.get("oli"), true);
-        MoveAction move4 = new MoveAction("Move4", testNPC, start4, finish4);
+        MoveAction move4 = new MoveAction("Move4", testNPC, finish4);
         testNPC.addAction(move4);
         WaitAction wait4= new WaitAction("Wait4", testNPC, 2000);
         testNPC.addAction(wait4);
@@ -187,5 +183,15 @@ public class NPC extends PhysicalEntity
         }
         return false;
     }
+
+    /*
+     * mined quantity per unit of time [kg/sec]
+     */
+    public double getMiningSpeed()
+    {
+        throw new UnsupportedOperationException("getMiningSpeed : Not yet implemented");
+    }
+
+
 
 }

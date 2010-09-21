@@ -34,7 +34,13 @@ public class PhysicalEntity
     private long initialTime = -1;
     private Vector3 initialPosition = null;
 
+    private Inventory inventory;
 
+    public PhysicalEntity()
+    {
+        inventory = new Inventory(1);
+    }
+    
     synchronized public long getHeadingUpdateTime() {
         return this.lastUpdateTime;
     }
@@ -148,7 +154,6 @@ public class PhysicalEntity
                 setHeadingUpdateTime();
             }
     }
-
     synchronized public void setOrientation(float rx, float ry, float rz, float w)
     {
         if(this.rx!=rx || this.ry!=ry || this.rz!=rz || this.w!=w)
@@ -335,13 +340,10 @@ public class PhysicalEntity
         //       );
   
     }
-
-
      synchronized public float getSpeed()
     {
         return this.speed;
     }
-
      synchronized public void setSpeed(float speed)
     {
           if(speed != this.speed)
@@ -352,7 +354,6 @@ public class PhysicalEntity
             this.speed = speed;
           }
     }
-
     synchronized public void setEndSpeed(float endSpeed)
     {
         if(this.endSpeed != endSpeed)
@@ -364,7 +365,6 @@ public class PhysicalEntity
             setupAcceleration();
          }
     }
-
     synchronized public void setAccelerationTime(long accelerationTime)
     {
         
@@ -377,7 +377,6 @@ public class PhysicalEntity
             setupAcceleration();
         }
     }
-
     private void setupAcceleration()
     {
         boolean isAccelerating = (this.endSpeed >= 0 && this.accelerationTime > 0);
@@ -386,23 +385,18 @@ public class PhysicalEntity
         this.initialTime = isAccelerating ? WorldUpdater.getInstance().getSimulationTime() : -1;
         this.initialPosition = new Vector3(this.x, this.y, this.z);
     }
-
     synchronized public boolean isAccelerating()
     {
         return (this.acceleration != 0);
     }
-    
     synchronized public long getAccelerationTime()
     {
         return this.accelerationTime;
-    }
-    
+    }   
     synchronized public float getEndSpeed()
     {
         return this.endSpeed;
     }
-
-
     public float getAcceleration() {
         return acceleration;
     }
@@ -418,9 +412,11 @@ public class PhysicalEntity
             this.z = z;
         }
     }
-
     public float distance(PhysicalEntity other) {
         return (float) Math.sqrt((other.getX()-x)*(other.getX()-x)+(other.getY()-y)*(other.getY()-y)+(other.getZ()-z)*(other.getZ()-z));
      }
-    
+    public Inventory getInventory()
+    {
+        return inventory;
+    }
 }

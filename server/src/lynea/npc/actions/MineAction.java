@@ -5,24 +5,26 @@
 
 package lynea.npc.actions;
 
+import lynea.npc.NPC;
 import lynea.npc.interrupts.AttackInterrupt;
 import lynea.npc.interrupts.AttackListener;
-import lynea.npc.NPC;
 
 /**
  *
  * @author Olivier
  */
-public class WaitAction extends TimedActionElement implements AttackListener
+public class MineAction extends ActionElement implements AttackListener
 {
-
     private boolean hasBeenAttacked = false;
-    private ActionMark waitPosition;
+    private ActionMark miningPosition;
+    private Deposit deposit;
+    private double minedQuantityUnderOneUnit = 0;
 
-    public WaitAction(String name, NPC npc, long waitMilliSeconds)
+    public MineAction(String name, NPC npc, Deposit deposit)
     {
-        super(name, npc, waitMilliSeconds);
-       
+        super(name, npc);
+        this.deposit = deposit;
+
         attachListener(this);
     }
 
@@ -31,6 +33,20 @@ public class WaitAction extends TimedActionElement implements AttackListener
     {
         if(!super.update(deltaTime))
             return false;
+
+        minedQuantityUnderOneUnit += npc.getMiningSpeed()*(float)deltaTime/1000.0f;
+
+        if(minedQuantityUnderOneUnit >= 1)
+        {
+            minedQuantityUnderOneUnit = minedQuantityUnderOneUnit - 1;
+            deposit.mine(1, npc);
+            
+            if(!npc.getInventory().canAddDeposit(deposit.getType(), 1))
+            {
+                end();
+            }
+        }
+      
         return true;
     }
 
@@ -38,10 +54,9 @@ public class WaitAction extends TimedActionElement implements AttackListener
     public void start()
     {
         System.out.println(getName()+".start()");
-        waitPosition = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
+        miningPosition = new ActionMark(npc.getX(), npc.getY(), npc.getZ(), npc.getOwner(), false);
         
-        //this also sets the speed to zero
-        npc.setAnimation("idle1");
+        npc.setAnimation("mine");
         super.start();
     }
 
@@ -49,6 +64,7 @@ public class WaitAction extends TimedActionElement implements AttackListener
     protected void end()
     {
         System.out.println(getName()+".end()");
+        npc.setAnimation("idle1");
         super.end();
     }
 
@@ -58,7 +74,7 @@ public class WaitAction extends TimedActionElement implements AttackListener
     public void onAttack(AttackInterrupt attackInterrupt)
     {
         pause();
-        AttackAction attackAction = new AttackAction(name+".onAttack",
+        AttackAction attackAction = new AttackAction(getName()+".onAttack",
                 npc,
                 attackInterrupt.getAttacker(),
                 AttackAction.StopCondition.ESCAPE,
@@ -76,16 +92,18 @@ public class WaitAction extends TimedActionElement implements AttackListener
         if (hasBeenAttacked)
         {
             pause();
-            MoveAction goBackToWaitPosition = new MoveAction("goBackToWaitPosition", npc, waitPosition);
-            goBackToWaitPosition.setParent(this);
-            goBackToWaitPosition.start();
-            alternativeAction = goBackToWaitPosition;
+            MoveAction goBackToMinePosition = new MoveAction("goBackToMinePosition", npc, miningPosition);
+            goBackToMinePosition.setParent(this);
+            goBackToMinePosition.start();
+            alternativeAction = goBackToMinePosition;
             hasBeenAttacked = false;
         }
-        //else: automatically resume the wait action
-        //you could use setTimeleft() or end() here to modify the remaining wait time
 
-        //note : another way to code this wait-attack-moveback-waitagain action chain
+ 
+        //else: automatically resume the mine action
+        //you could use end() here to abord the mine action
+
+        //note : another way to code this mine-attack-moveback-mineagain action chain
         //would be to create an actionGroup with both the attack and moveback actions and set this actionGroup as the alternativeAction
         //instead of just the attack action
     }
